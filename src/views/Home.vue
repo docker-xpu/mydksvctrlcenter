@@ -13,14 +13,20 @@
             <Icon type="logo-windows"></Icon>
             <span>主机管理</span>
           </MenuItem>
-          <MenuItem name="1-2">
-            <Icon type="ios-search"></Icon>
-            <span>Option 2</span>
+          <!-- todo -->
+          <MenuItem name="images">
+            <Icon type="ios-appstore"></Icon>
+            <span>镜像管理</span>
           </MenuItem>
-          <MenuItem name="1-3">
-            <Icon type="ios-settings"></Icon>
-            <span>Option 3</span>
+          <MenuItem name="networks">
+            <Icon type="ios-globe"></Icon>
+            <span>网络管理</span>
           </MenuItem>
+          <MenuItem name="di">
+            <Icon type="ios-apps"></Icon>
+            <span>集群管理</span>
+          </MenuItem>
+
           <MenuItem name="about" to="about">
             <Icon type="md-infinite"></Icon>
             <span>关于我们</span>

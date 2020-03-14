@@ -1,8 +1,37 @@
 <template>
   <div>
     <Row>
-      <Col span="18"  style="padding-right: 20px">
-        <Card title="主机管理" icon="logo-windows" style="margin-bottom: 20px"></Card>
+      <Col span="18" style="padding-right: 20px">
+        <Card title="主机管理" icon="logo-windows" shadow style="margin-bottom: 20px">
+          <Row :gutter="16">
+            <Col span="6">
+              <!-- todo -->
+              <Form>
+                <FormItem>
+                  <label>
+                    <Input placeholder="主机Ip"></Input>
+                  </label>
+                </FormItem>
+                <FormItem>
+                  <label>
+                    <Select>
+                      <Option value="beijing">New York</Option>
+                      <Option value="shanghai">London</Option>
+                      <Option value="shenzhen">Sydney</Option>
+                    </Select>
+                  </label>
+                </FormItem>
+                <FormItem>
+                  <Button type="success" long>测试连接</Button>
+                </FormItem>
+                <FormItem>
+                  <Button type="primary" long>添加主机</Button>
+                </FormItem>
+              </Form>
+            </Col>
+            <Col span="18"></Col>
+          </Row>
+        </Card>
 
         <Row :gutter="16">
           <Col span="12" v-for="(item, index) in $store.state.hosts" :key="index">
@@ -35,13 +64,17 @@
           </CellGroup>
         </Card>
         <Card title="新增凭据" icon="md-key" shadow>
-          <Input style="padding-bottom: 10px" v-model="licence.name" type="text" placeholder="凭据名称">
-            <Icon type="ios-person-outline" slot="prepend"></Icon>
-          </Input>
-          <Input style="padding-bottom: 10px" v-model="licence.pwd" type="password" placeholder="凭据密码">
-            <Icon type="ios-lock-outline" slot="prepend"></Icon>
-          </Input>
-          <Button type="primary" long @click="newLicence">提交</Button>
+          <Form>
+            <FormItem>
+              <Input v-model="licence.name" type="text" placeholder="凭据名称"></Input>
+            </FormItem>
+            <FormItem>
+              <Input v-model="licence.pwd" type="password" placeholder="凭据密码"></Input>
+            </FormItem>
+            <FormItem>
+              <Button type="primary" long @click="newLicence">提交</Button>
+            </FormItem>
+          </Form>
         </Card>
       </Col>
     </Row>
@@ -64,8 +97,7 @@
           pwd: '',
         },
 
-        charts: {
-        },
+        charts: {},
       }
     },
     computed: {
@@ -159,8 +191,7 @@
           // console.log(this.charts);
           let c = Highcharts.chart(ip, {
             chart: {
-              events: {
-              },
+              events: {},
             },
             title: {
               text: '用量'
