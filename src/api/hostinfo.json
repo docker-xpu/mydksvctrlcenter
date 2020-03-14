@@ -1,0 +1,18 @@
+{
+  "192.168.0.102": {
+    "cpu": 0.1,
+    "disk": 0.2,
+    "mem": 0.3,
+    "package_recv": 111,
+    "package_sent": 222,
+    "timestamp": 11212121212
+  },
+  "192.168.2.2": {
+    "cpu": 0.1,
+    "disk": 0.2,
+    "mem": 0.3,
+    "package_recv": 111,
+    "package_sent": 222,
+    "timestamp": 11212121212
+  }
+}
