@@ -5,7 +5,11 @@ import store from './store'
 import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
 
+// animate
+import animated from 'animate.css'
+
 Vue.use(ViewUI);
+Vue.use(animated);
 
 Vue.config.productionTip = false;
 
