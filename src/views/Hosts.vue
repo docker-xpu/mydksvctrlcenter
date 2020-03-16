@@ -61,9 +61,16 @@
           </Row>
         </Card>
 
+        <div style="text-align: center">
+          <ButtonGroup size="large">
+            <Button @click="onClickWatchBtn" type="success" ghost>打开实时监控</Button>
+            <Button @click="onClickCloseWatchBtn" type="warning" ghost>关闭实时监控</Button>
+          </ButtonGroup>
+        </div>
+
         <Row :gutter="16">
           <Col span="12" v-for="(item, index) in $store.state.hosts" :key="index">
-            <div>
+            <div style="padding-bottom: 20px">
               <Card>
                 <div slot="extra">
                   <Tag :color="item.hostStatus === 0 ? 'success': 'default'">{{item.hostStatusStr}}</Tag>
@@ -80,7 +87,7 @@
                 <Tag color="orange">磁盘可用{{(item.disk_free/1024/1024/1024).toFixed(1)}}GB</Tag>
                 <Tag color="purple">内存{{(item.memTotal/1024/1024/1024).toFixed(1)}}GB</Tag>
 
-                <div :id="index" style="width: 100%; height: 300px">
+                <div v-if="showWatch" :id="index" style="width: 100%; height: 300px">
                   <!--                  {{item.hostIp}} | {{allData[index]}}-->
                   <!-- {{item}} -->
                 </div>
@@ -153,7 +160,8 @@
           version: ""
         },
 
-        allData: [],
+        websocket: undefined,
+        showWatch: false,  // 是否查看实时监控
       };
     },
     computed: {
@@ -170,20 +178,29 @@
     mounted() {
       store.dispatch("getAllLicence");
       store.dispatch("getAllHost");
-
-      let ws = new WebSocket(`ws://tim.natapp1.cc/getHostInfoWebSocket`);
-      ws.onopen = e => {
-        console.log("建立ws连接");
-      };
-      ws.onclose = e => {
-        console.log("断开ws连接");
-      };
-      ws.onmessage = this.onmessage;
-      ws.onerror = e => {
-        console.log("ws错误");
-      };
     },
     methods: {
+      // 查看监控按钮点击
+      onClickWatchBtn() {
+        this.showWatch = true;
+        this.websocket = new WebSocket(`ws://tim.natapp1.cc/getHostInfoWebSocket`);
+        this.websocket.onopen = e => {
+          console.log("建立ws连接");
+        };
+        this.websocket.onclose = e => {
+          console.log("断开ws连接");
+        };
+        this.websocket.onmessage = this.onmessage;
+        this.websocket.onerror = e => {
+          console.log("ws错误");
+        };
+      },
+      // 关闭实时监控
+      onClickCloseWatchBtn() {
+        // this.showWatch = false;
+        this.websocket.close();
+      },
+      // 收到 websocket 数据
       onmessage(e) {
         // console.log(e)
         let res = JSON.parse(e.data);
