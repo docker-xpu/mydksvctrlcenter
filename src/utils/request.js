@@ -54,8 +54,8 @@ service.interceptors.response.use(
 
         Notice.error({
             title: '网络错误',
-            desc: '小蜜蜂飞到了电波到不了的地方',
-            duration: 5
+            desc: '臣妾做不到呀',
+            duration: 0
         });
 
         LoadingBar.error();

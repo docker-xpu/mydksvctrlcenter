@@ -30,17 +30,17 @@ export default new Vuex.Store({
         getAllHost(context) {
             listHost().then(res => {
                 context.state.hosts = res.data;
-                // for (let i = 0; i < context.state.hosts.length; ++i) {
-                //     let d = context.state.hosts[i]
-                //     d['log'] = {
-                //         cpu: 0,
-                //         disk: 0,
-                //         mem: 0,
-                //         package_recv: 0,
-                //         package_sent: 0,
-                //         timestamp: 0
-                //     }
-                // }
+                for (let i = 0; i < context.state.hosts.length; ++i) {
+                    let d = context.state.hosts[i];
+                    d['log'] = {
+                        cpu: [],
+                        disk: [],
+                        mem: [],
+                        package_recv: [],
+                        package_sent: [],
+                        timestamp: []
+                    }
+                }
                 // console.log(context.state.hosts)
             })
         },
