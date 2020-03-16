@@ -1,10 +1,14 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <logo></logo>
   </div>
 </template>
 
 <script>
+  import Logo from "../components/Logo";
+  export default {
+    components: {Logo}
+  }
 </script>
 
 <style>

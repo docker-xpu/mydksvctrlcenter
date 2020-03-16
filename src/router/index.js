@@ -25,6 +25,11 @@ const routes = [
         name: 'Hosts',
         component: () => import('../views/Hosts')
       },
+      {
+        path: '/images',
+        name: 'Images',
+        component: () => import('../views/Images')
+      },
     ],
   },
 ];

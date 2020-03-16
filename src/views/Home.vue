@@ -9,7 +9,7 @@
       <Sider ref="side1" hide-trigger collapsible :collapsed-width="78" v-model="isCollapsed">
         <div style="text-align: center">
           <a href="/">
-            <img class="advert_avatar" ref="logo" src="@/assets/logo-without-text.png" style="width: 100px; text-align: center" alt="logo">
+            <img class="advert_avatar" ref="logo" src="../assets/logo-without-text.png" style="width: 100px; text-align: center" alt="logo">
           </a>
         </div>
         <!--        active-name="hosts" -->
@@ -19,7 +19,7 @@
             <span>主机管理</span>
           </MenuItem>
           <!-- todo -->
-          <MenuItem name="images">
+          <MenuItem name="images" to="images">
             <Icon type="ios-appstore"></Icon>
             <span>镜像管理</span>
           </MenuItem>

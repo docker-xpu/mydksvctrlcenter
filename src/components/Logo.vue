@@ -1,15 +1,15 @@
 <template>
   <div>
     <transition>
-      <div class="animated rubberBand" style="text-align: center; padding-left: 50px">
-        <img class="advert_avatar_no_border" src="../assets/logo-without-text.png" alt="logo" />
+      <div class="animated rubberBand" style="text-align: center">
+        <img class="advert_avatar_no_border" src="../assets/logo-JDCloud.png" alt="logo" />
       </div>
     </transition>
 
     <transition>
-      <div class="animated fadeInUp advert_avatar" style="margin: 0 auto; width: 500px;">
+      <div class="animated fadeInUp advert_avatar" style="margin: 0 auto; width: 40%;">
         <Card :bordered="false" shadow>
-          <p slot="title" style="text-align: center">轻量级工业化容器引擎</p>
+          <p slot="title" style="text-align: center">筋斗云</p>
           <div style="text-align: center">
             <a href="http://47.103.14.73:2076/">
               <h2>Index</h2>
@@ -80,27 +80,7 @@ export default {
     -o-animation: advert_nav-m 20s linear infinite;
     animation-direction: alternate;
   }
-  .advert_avatar:hover {
-    animation: advert_nav-x 0.3s linear infinite;
-    -moz-animation: advert_nav-x 0.3s linear infinite;
-    /* Firefox */
-    -webkit-animation: advert_nav-x 0.3s ease-in-out infinite;
-    /* Safari Chrome */
-    -o-animation: advert_nav-x 0.3s linear infinite;
-  }
-  .advert_avatar p a img:hover {
-    animation: advert_nav-a 1s linear infinite;
-    -moz-animation: advert_nav-a 1s linear infinite;
-    /* Firefox */
-    -webkit-animation: advert_nav-a 1s linear infinite;
-    /* Safari Chrome */
-    -o-animation: advert_nav-a 1s linear infinite;
-  }
-  .advert_avatar p a img {
-    padding: 5px 15px;
-    color: #9a9da0;
-    text-decoration: none;
-  }
+
   @keyframes advert_nav-m {
     10% {
       border-color: #ff9292;
@@ -135,19 +115,19 @@ export default {
   }
   @keyframes advert_nav-x {
     10% {
-      -webkit-transform: translate(-0.5px, 1.5px) rotate(0.5deg);
+      -webkit-transform: translate(-10.5px, 10.5px) rotate(0.5deg);
       border-color: #ffbebe;
     }
     20% {
-      -webkit-transform: translate(-0.5px, 1.5px) rotate(-0.5deg);
+      -webkit-transform: translate(-10.5px, 10.5px) rotate(-0.5deg);
       border-color: #ffdebe;
     }
     30% {
-      -webkit-transform: translate(-2.5px, -1.5px) rotate(0.5deg);
+      -webkit-transform: translate(-20.5px, -10.5px) rotate(0.5deg);
       border-color: #fff3be;
     }
     40% {
-      -webkit-transform: translate(-2.5px, -2.5px) rotate(-1.5deg);
+      -webkit-transform: translate(-20.5px, -20.5px) rotate(-1.5deg);
       border-color: #eeffbe;
     }
     50% {
