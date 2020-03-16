@@ -1,10 +1,10 @@
 <template>
   <div>
     <Row>
-      <Col span="18" style="padding-right: 20px">
+      <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 18, offset: 0 }" style="padding-right: 20px">
         <Card title="主机管理" icon="logo-windows" shadow style="margin-bottom: 20px">
           <Row :gutter="16">
-            <Col span="6">
+            <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 6, offset: 0 }">
               <Form>
                 <FormItem>
                   <label>
@@ -36,9 +36,9 @@
                 </FormItem>
               </Form>
             </Col>
-            <Col span="18">
+            <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 18, offset: 0 }">
               <Row :gutter="10">
-                <Col v-for="(item, index) in $store.state.hosts" :key="index" span="8">
+                <Col v-for="(item, index) in $store.state.hosts" :key="index" :md="{ span: 24, offset: 0 }" :lg="{ span: 8, offset: 0 }">
                   <Card>
                     <Badge status="processing"></Badge>
                     <br/>
@@ -69,7 +69,7 @@
         </div>
 
         <Row :gutter="16">
-          <Col span="12" v-for="(item, index) in $store.state.hosts" :key="index">
+          <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 12, offset: 0 }" v-for="(item, index) in $store.state.hosts" :key="index">
             <div style="padding-bottom: 20px">
               <Card>
                 <div slot="extra">
@@ -97,7 +97,7 @@
         </Row>
       </Col>
 
-      <Col span="6">
+      <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 6, offset: 0 }">
         <Card title="已有凭据" icon="md-key" shadow style="width: 100%; margin-bottom: 20px">
           <CellGroup>
             <Cell
