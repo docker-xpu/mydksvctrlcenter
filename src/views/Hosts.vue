@@ -38,7 +38,8 @@
             </Col>
             <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 18, offset: 0 }">
               <Row :gutter="10">
-                <Col v-for="(item, index) in $store.state.hosts" :key="index" :md="{ span: 24, offset: 0 }" :lg="{ span: 8, offset: 0 }">
+                <Col v-for="(item, index) in $store.state.hosts" :key="index" :md="{ span: 24, offset: 0 }"
+                     :lg="{ span: 8, offset: 0 }">
                   <Card>
                     <Badge status="processing"></Badge>
                     <br/>
@@ -69,7 +70,8 @@
         </div>
 
         <Row :gutter="16">
-          <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 12, offset: 0 }" v-for="(item, index) in $store.state.hosts" :key="index">
+          <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 12, offset: 0 }" v-for="(item, index) in $store.state.hosts"
+               :key="index">
             <div style="padding-bottom: 20px">
               <Card>
                 <div slot="extra">
@@ -78,6 +80,11 @@
 
                 <Badge status="processing"></Badge>
                 {{item.hostIp}}
+                <Divider></Divider>
+
+                <div style="text-align: center">
+                  <Button type="primary" ghost size="large" @click="onClickShowContainerInfoBtn(item)">详细信息</Button>
+                </div>
 
                 <Divider></Divider>
                 <Tag color="blue">{{item.hostOs}} {{item.hostPlatformOs}} {{item.hostKernelVersion}}</Tag>
@@ -97,6 +104,76 @@
         </Row>
       </Col>
 
+      <Drawer width="70" :closable="false" v-model="showContainerInfoDrawer">
+        <h2>
+          {{showContainerInfo.hostIp}}
+          <Tag :color="showContainerInfo.hostStatus === 0 ? 'success': 'default'">{{showContainerInfo.hostStatusStr}}
+          </Tag>
+        </h2>
+        <Tag color="blue">{{showContainerInfo.hostOs}} {{showContainerInfo.hostPlatformOs}}
+          {{showContainerInfo.hostKernelVersion}}
+        </Tag>
+        <Tag color="magenta">物理CPU{{showContainerInfo.physical_cores}}核</Tag>
+        <Tag color="red">逻辑CPU{{showContainerInfo.logical_cores}}核</Tag>
+        <Tag color="orange">磁盘大小{{(showContainerInfo.disk_total/1024/1024/1024).toFixed(1)}}GB</Tag>
+        <Tag color="orange">磁盘可用{{(showContainerInfo.disk_free/1024/1024/1024).toFixed(1)}}GB</Tag>
+        <Tag color="purple">内存{{(showContainerInfo.memTotal/1024/1024/1024).toFixed(1)}}GB</Tag>
+
+        <Divider></Divider>
+
+        <Table border :columns="containerInfoColumns" :data="showContainerInfo.containers">
+          <template slot-scope="{ row }" slot="id">
+            <span>{{ row.container.names[0] }}</span>
+          </template>
+          <template slot-scope="{ row }" slot="state">
+            <span></span>
+            <Tag type="dot" :color="row.container.state==='running'?'success':''">{{ row.container.state }}</Tag>
+          </template>
+          <template slot-scope="{ row }" slot="command">
+            <span>{{ row.container.command }}</span>
+          </template>
+          <template slot-scope="{ row }" slot="image">
+            <span>{{ row.container.image }}</span>
+          </template>
+          <template slot-scope="{ row }" slot="net">
+            <span>IP地址：{{ row.container.networkSettings.networks.bridge.ipaddress }}</span>
+            <br>
+            <span>网关：{{ row.container.networkSettings.networks.bridge.gateway }}</span>
+            <br>
+            <span v-for="(item, index) in row.container.ports" :key="index">{{ item.type }}/{{item.ip}}-{{item.privatePort}}:{{item.publicPort}}</span>
+          </template>
+          <template slot-scope="{ row }" slot="mem_info">
+            <span>限制：{{ row.mem_info === null ? '无信息' : row.mem_info.memoryLimitInBbytes }}</span>
+            <br>
+            <span>已使用：{{ row.mem_info === null ? '无信息' : row.mem_info.memUsageInBytes }}</span>
+            <br>
+            <span>最大使用：{{ row.mem_info === null ? '无信息' : row.mem_info.memMaxUsageInBytes }}</span>
+          </template>
+          <template slot-scope="{ row }" slot="cpu_info">
+            <span>系统：{{ row.cpu_info === null ? '无信息' : row.cpu_info.system }}</span>
+            <br>
+            <span>用户：{{ row.cpu_info === null ? '无信息' : row.cpu_info.user }}</span>
+            <br>
+            <span>优先级(nice值)：{{ row.cpu_info === null ? '无信息' : row.cpu_info.nice }}</span>
+          </template>
+          <template slot-scope="{ row }" slot="mounts">
+            <span v-for="(mnt, index) in row.container.mounts" :key="index">{{ mnt.Destination }}:{{mnt.Source}}</span>
+          </template>
+          <template slot-scope="{ row, index }" slot="action">
+            <!--            todo here-->
+            <Button type="primary" size="small" style="margin-right: 5px">停止</Button>
+            <Button type="error" size="small">删除</Button>
+          </template>
+        </Table>
+
+        <div style="text-align: center; padding-top: 30px">
+          <Button type="primary" ghost size="large">
+            创建容器
+          </Button>
+        </div>
+      </Drawer>
+
+      <!--      凭据-->
       <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 6, offset: 0 }">
         <Card title="已有凭据" icon="md-key" shadow style="width: 100%; margin-bottom: 20px">
           <CellGroup>
@@ -159,6 +236,49 @@
           licenceId: 0,
           version: ""
         },
+
+        showContainerInfoDrawer: false,
+        showContainerInfo: {},
+        containerInfoColumns: [
+          {
+            title: '容器ID',
+            slot: 'id'
+          },
+          {
+            title: '状态',
+            slot: 'state'
+          },
+          {
+            title: '镜像',
+            slot: 'image'
+          },
+          {
+            title: '命令',
+            slot: 'command'
+          },
+          {
+            title: '网络',
+            slot: 'net'
+          },
+          {
+            title: '内存',
+            slot: 'mem_info'
+          },
+          {
+            title: 'CPU',
+            slot: 'cpu_info'
+          },
+          {
+            title: '挂载',
+            slot: 'mounts'
+          },
+          {
+            title: 'Action',
+            slot: 'action',
+            width: 150,
+            align: 'center'
+          },
+        ],
 
         websocket: undefined,
         showWatch: false,  // 是否查看实时监控
@@ -366,7 +486,12 @@
             });
           }
         });
-      }
+      },
+      // 当点击查看容器信息
+      onClickShowContainerInfoBtn(item) {
+        this.showContainerInfo = item;
+        this.showContainerInfoDrawer = true;
+      },
     }
   };
 </script>

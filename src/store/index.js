@@ -1,30 +1,34 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
 import {
     listLicence,
     listHost,
     deleteLicence,
     newLicence
-} from '../api/host'
-import { Message } from 'view-design'
+} from '../api/host';
+import {
+    listImages
+} from '../api/images';
+import { Message } from 'view-design';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        loading: false,
+        loading: [],
 
         licences: [], // 主机凭据
         hosts: [], // 主机列表
+        images: [],  // 镜像列表
     },
     mutations: {},
     actions: {
         // 获取全部主机凭据
         getAllLicence(context) {
             listLicence().then(res => {
-                context.state.licences = res.data
-            })
+                context.state.licences = res.data;
+            });
         },
         // 获取主机列表
         getAllHost(context) {
@@ -41,8 +45,7 @@ export default new Vuex.Store({
                         timestamp: []
                     }
                 }
-                // console.log(context.state.hosts)
-            })
+            });
         },
         // 删除凭据
         deleteLicence(context, license) {
@@ -67,6 +70,13 @@ export default new Vuex.Store({
                 } else {
                     Message.error(res.msg)
                 }
+            });
+        },
+        // 获取全部镜像数据
+        getAllImages(context) {
+            listImages().then(res=>{
+                console.log(res);
+                context.state.images = res.data;
             });
         },
     },

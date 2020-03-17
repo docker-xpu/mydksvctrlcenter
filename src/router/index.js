@@ -30,6 +30,11 @@ const routes = [
         name: 'Images',
         component: () => import('../views/Images')
       },
+      {
+        path: '/editor',
+        name: 'Editor',
+        component: () => import('../views/Editor')
+      },
     ],
   },
 ];

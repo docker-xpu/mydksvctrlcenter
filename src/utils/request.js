@@ -29,10 +29,11 @@ const service = axios.create({
 // request 拦截器
 service.interceptors.request.use(
     config => {
-        store.state.loading = Message.loading({
+        LoadingBar.start();
+        store.state.loading.push(Message.loading({
             duration: 0,
-            content: 'Loading...',
-        });
+            content: '数据载入中...',
+        }));
 
         return config;
     },
@@ -44,13 +45,16 @@ service.interceptors.request.use(
 // response 拦截器
 service.interceptors.response.use(
     res => {
-        Message.destroy();
+        // Message.destroy();
+        if (store.state.loading.length === 1) {
+            LoadingBar.finish();
+        }
+        setTimeout(store.state.loading.pop(), 0);
 
-        LoadingBar.finish();
         return res.data;
     },
     err => {
-        Message.destroy();
+        // Message.destroy();
 
         Notice.error({
             title: '网络错误',

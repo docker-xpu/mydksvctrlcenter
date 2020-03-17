@@ -6,12 +6,29 @@ import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
 
 // animate
-import animated from 'animate.css'
+import animated from 'animate.css';
+
+import {codemirror} from 'vue-codemirror';
+import 'codemirror/lib/codemirror.css';
 
 Vue.use(ViewUI);
 Vue.use(animated);
+Vue.use(codemirror);
 
 Vue.config.productionTip = false;
+
+ViewUI.LoadingBar.config({
+  height: 5
+});
+
+router.beforeEach((to, from, next) => {
+  ViewUI.LoadingBar.start();
+  next();
+});
+
+router.afterEach(route => {
+  ViewUI.LoadingBar.finish();
+});
 
 new Vue({
   router,
