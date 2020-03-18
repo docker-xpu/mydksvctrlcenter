@@ -104,24 +104,26 @@
         </Row>
       </Col>
 
-      <Drawer width="80" :closable="false" v-model="showContainerInfoDrawer">
-        <h2>
-          {{showContainerInfo.hostIp}}
-          <Tag :color="showContainerInfo.hostStatus === 0 ? 'success': 'default'">{{showContainerInfo.hostStatusStr}}
+      <Drawer width="90" :closable="true" v-model="showContainerInfoDrawer">
+        <div>
+          <h2>
+            {{showContainerInfo.hostIp}}
+            <Tag :color="showContainerInfo.hostStatus === 0 ? 'success': 'default'">{{showContainerInfo.hostStatusStr}}
+            </Tag>
+          </h2>
+          <Tag color="blue">{{showContainerInfo.hostOs}} {{showContainerInfo.hostPlatformOs}}
+            {{showContainerInfo.hostKernelVersion}}
           </Tag>
-        </h2>
-        <Tag color="blue">{{showContainerInfo.hostOs}} {{showContainerInfo.hostPlatformOs}}
-          {{showContainerInfo.hostKernelVersion}}
-        </Tag>
-        <Tag color="magenta">物理CPU{{showContainerInfo.physical_cores}}核</Tag>
-        <Tag color="red">逻辑CPU{{showContainerInfo.logical_cores}}核</Tag>
-        <Tag color="orange">磁盘大小{{(showContainerInfo.disk_total/1024/1024/1024).toFixed(1)}}GB</Tag>
-        <Tag color="orange">磁盘可用{{(showContainerInfo.disk_free/1024/1024/1024).toFixed(1)}}GB</Tag>
-        <Tag color="purple">内存{{(showContainerInfo.memTotal/1024/1024/1024).toFixed(1)}}GB</Tag>
+          <Tag color="magenta">物理CPU{{showContainerInfo.physical_cores}}核</Tag>
+          <Tag color="red">逻辑CPU{{showContainerInfo.logical_cores}}核</Tag>
+          <Tag color="orange">磁盘大小{{(showContainerInfo.disk_total/1024/1024/1024).toFixed(1)}}GB</Tag>
+          <Tag color="orange">磁盘可用{{(showContainerInfo.disk_free/1024/1024/1024).toFixed(1)}}GB</Tag>
+          <Tag color="purple">内存{{(showContainerInfo.memTotal/1024/1024/1024).toFixed(1)}}GB</Tag>
+        </div>
 
         <Divider></Divider>
 
-        <Table border :columns="containerInfoColumns" :data="showContainerInfo.containers">
+        <Table stripe :columns="containerInfoColumns" :data="showContainerInfo.containers">
           <template slot-scope="{ row }" slot="id">
             <span>{{ row.container.names[0] }}</span>
           </template>
@@ -167,10 +169,41 @@
         </Table>
 
         <div style="text-align: center; padding-top: 30px">
-          <Button type="primary" size="large">
+          <Button type="primary" size="large" @click="showCreateContainerDrawer = true">
             创建容器
           </Button>
         </div>
+      </Drawer>
+
+      <!--      创建容器 drawer-->
+      <Drawer title="创建容器" width="50" :closable="true" v-model="showCreateContainerDrawer">
+        <Form v-model="createContainerForm" style="width: 500px">
+          <FormItem>
+            <label>容器名：
+              <Input type="text" v-model="createContainerForm.container_name" placeholder="例如：mynginx1"></Input>
+            </label>
+            <label>镜像名：
+              <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>
+            </label>
+            <label>Command：
+              <Input type="textarea" v-model="createContainerForm.cmd" placeholder="例如：nginx -g daemon off;"></Input>
+            </label>
+          </FormItem>
+          <FormItem label="容器卷：">
+            <Row>
+              <Col span="8">
+                <label>宿主机路径：
+                  <Input placeholder="例如：/home/ahojcn"></Input>
+                </label>
+              </Col>
+              <Col span="8">
+              </Col>
+              <Col span="4">
+                <Button>增加</Button>
+              </Col>
+            </Row>
+          </FormItem>
+        </Form>
       </Drawer>
 
       <!--      凭据-->
@@ -238,7 +271,8 @@
           version: ""
         },
 
-        showContainerInfoDrawer: false,
+        showContainerInfoDrawer: true,
+        showCreateContainerDrawer: true,
         showContainerInfo: {},
         containerInfoColumns: [
           {
@@ -281,6 +315,20 @@
           },
         ],
         showHostIndex: 0,
+
+        createContainerForm: {
+          ip: '',
+          image_name: '',
+          container_name: '',
+          cmd: '',  // 提交时候需要处理
+          volumes: [],
+          working_dir: '',
+          container_port_proto: '',
+          container_port: '',
+          host_port: '',
+          cpu_shares: '',
+          memory: '',
+        },
 
         websocket: undefined,
         showWatch: false,  // 是否查看实时监控
@@ -491,9 +539,8 @@
       },
       // 当点击查看容器信息
       onClickShowContainerInfoBtn(index) {
-        console.log(index);
         this.showHostIndex = index;
-        this.showContainerInfo = this.$store.state.hosts[index];
+        this.showContainerInfo = this.$store.state.hosts[this.showHostIndex];
         this.showContainerInfoDrawer = true;
       },
 
@@ -502,15 +549,17 @@
         startContainer({
           ip: this.showContainerInfo.hostIp,
           container_name: row.container.id
-        }).then(res=>{
+        }).then(res => {
           if (res.code === 0) {
             this.$Message.success(res.msg);
+            row.container.state = "running";
           } else {
             this.$Message.error(res.msg);
           }
 
-          this.$store.dispatch('getAllHost');
-          this.onClickShowContainerInfoBtn(this.showHostIndex);
+          this.$store.dispatch('getAllHost').then(() => {
+            this.onClickShowContainerInfoBtn(this.showHostIndex);
+          })
         });
 
         // createContainer({
@@ -542,14 +591,16 @@
         stopContainer({
           ip: this.showContainerInfo.hostIp,
           container_name: row.container.id
-        }).then(res=>{
+        }).then(res => {
           if (res.code === 0) {
             this.$Message.success(res.msg);
+            row.container.state = "exited";
           } else {
             this.$Message.error(res.msg);
           }
-          this.$store.dispatch('getAllHost');
-          this.onClickShowContainerInfoBtn(this.showHostIndex);
+          this.$store.dispatch('getAllHost').then(() => {
+            this.onClickShowContainerInfoBtn(this.showHostIndex);
+          });
         })
       },
       // 点击删除容器
@@ -565,15 +616,16 @@
               ip: this.showContainerInfo.hostIp,
               container_name: row.container.id,
               bol: true
-            }).then(res=>{
+            }).then(res => {
               console.log(res);
               if (res.code === 0) {
                 this.$Message.success(res.msg);
               } else {
                 this.$Message.error(res.msg);
               }
-              this.$store.dispatch('getAllHost');
-              this.onClickShowContainerInfoBtn(this.showHostIndex);
+              this.$store.dispatch('getAllHost').then(() => {
+                this.onClickShowContainerInfoBtn(this.showHostIndex);
+              })
             })
           }
         });
