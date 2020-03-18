@@ -48,7 +48,7 @@
                     主机IP：{{item.hostIp}}
                     <br/>
                     <Tag
-                            :color="item.hostStatus === 0 ? 'success': 'default'"
+                            :color="item.hostStatus === 0 ? 'green': 'default'"
                     >{{item.hostStatusStr}}
                     </Tag>
 
@@ -64,8 +64,8 @@
 
         <div style="text-align: center">
           <ButtonGroup size="large">
-            <Button @click="onClickWatchBtn" type="success" ghost>打开实时监控</Button>
-            <Button @click="onClickCloseWatchBtn" type="warning" ghost>关闭实时监控</Button>
+            <Button @click="onClickWatchBtn" type="success">打开实时监控</Button>
+            <Button @click="onClickCloseWatchBtn" type="warning">关闭实时监控</Button>
           </ButtonGroup>
         </div>
 
@@ -75,7 +75,7 @@
             <div style="padding-bottom: 20px">
               <Card>
                 <div slot="extra">
-                  <Tag :color="item.hostStatus === 0 ? 'success': 'default'">{{item.hostStatusStr}}</Tag>
+                  <Tag :color="item.hostStatus === 0 ? 'green': 'default'">{{item.hostStatusStr}}</Tag>
                 </div>
 
                 <Badge status="processing"></Badge>
@@ -83,7 +83,7 @@
                 <Divider></Divider>
 
                 <div style="text-align: center">
-                  <Button type="primary" ghost size="large" @click="onClickShowContainerInfoBtn(item)">详细信息</Button>
+                  <Button type="primary" size="large" @click="onClickShowContainerInfoBtn(index)">详细信息</Button>
                 </div>
 
                 <Divider></Divider>
@@ -104,7 +104,7 @@
         </Row>
       </Col>
 
-      <Drawer width="70" :closable="false" v-model="showContainerInfoDrawer">
+      <Drawer width="80" :closable="false" v-model="showContainerInfoDrawer">
         <h2>
           {{showContainerInfo.hostIp}}
           <Tag :color="showContainerInfo.hostStatus === 0 ? 'success': 'default'">{{showContainerInfo.hostStatusStr}}
@@ -160,14 +160,14 @@
             <span v-for="(mnt, index) in row.container.mounts" :key="index">{{ mnt.Destination }}:{{mnt.Source}}</span>
           </template>
           <template slot-scope="{ row, index }" slot="action">
-            <!--            todo here-->
-            <Button type="primary" size="small" style="margin-right: 5px">停止</Button>
-            <Button type="error" size="small">删除</Button>
+            <Button type="success" size="small" @click="startContainer(row)" long>启动</Button>
+            <Button type="primary" size="small" @click="stopContainer(row)" long>停止</Button>
+            <Button type="error" size="small" @click="removeContainer(row)" long>删除</Button>
           </template>
         </Table>
 
         <div style="text-align: center; padding-top: 30px">
-          <Button type="primary" ghost size="large">
+          <Button type="primary" size="large">
             创建容器
           </Button>
         </div>
@@ -214,6 +214,7 @@
 <script>
   import store from "../store/index";
   import {connHost, initHost, removeHost} from "../api/host";
+  import {startContainer, createContainer, stopContainer, removeContainer} from '../api/container'
 
   // require('echarts/lib/chart/line');
 
@@ -279,6 +280,7 @@
             align: 'center'
           },
         ],
+        showHostIndex: 0,
 
         websocket: undefined,
         showWatch: false,  // 是否查看实时监控
@@ -488,9 +490,93 @@
         });
       },
       // 当点击查看容器信息
-      onClickShowContainerInfoBtn(item) {
-        this.showContainerInfo = item;
+      onClickShowContainerInfoBtn(index) {
+        console.log(index);
+        this.showHostIndex = index;
+        this.showContainerInfo = this.$store.state.hosts[index];
         this.showContainerInfoDrawer = true;
+      },
+
+      // 点击启动容器
+      startContainer(row) {
+        startContainer({
+          ip: this.showContainerInfo.hostIp,
+          container_name: row.container.id
+        }).then(res=>{
+          if (res.code === 0) {
+            this.$Message.success(res.msg);
+          } else {
+            this.$Message.error(res.msg);
+          }
+
+          this.$store.dispatch('getAllHost');
+          this.onClickShowContainerInfoBtn(this.showHostIndex);
+        });
+
+        // createContainer({
+        //   "image_name": "nginx",
+        //   "container_name": "mynginx4",
+        //   "cmd": [
+        //     "nginx",
+        //     "-g",
+        //     "daemon off;"
+        //   ],
+        //   "volumes": [
+        //     {
+        //       "host_volume": "/root/bin/",
+        //       "container_volume": "/containerVolume4"
+        //     }
+        //   ],
+        //   "working_dir": "",
+        //   "container_port_proto": "tcp",
+        //   "container_port": "80",
+        //   "host_port": "8090",
+        //   "cpu_shares": 1024,
+        //   "memory": 400000000
+        // }).then(res=>{
+        //   console.log(res)
+        // })
+      },
+      // 点击停止容器
+      stopContainer(row) {
+        stopContainer({
+          ip: this.showContainerInfo.hostIp,
+          container_name: row.container.id
+        }).then(res=>{
+          if (res.code === 0) {
+            this.$Message.success(res.msg);
+          } else {
+            this.$Message.error(res.msg);
+          }
+          this.$store.dispatch('getAllHost');
+          this.onClickShowContainerInfoBtn(this.showHostIndex);
+        })
+      },
+      // 点击删除容器
+      removeContainer(row) {
+        console.log(row);
+        this.$Modal.confirm({
+          title: '确认删除吗？',
+          content: `容器：${row.container.names[0]}<br>
+          状态：${row.container.state}<br>镜像：${row.container.image}<br>Cmd：${row.container.command}
+          `,
+          onOk: () => {
+            removeContainer({
+              ip: this.showContainerInfo.hostIp,
+              container_name: row.container.id,
+              bol: true
+            }).then(res=>{
+              console.log(res);
+              if (res.code === 0) {
+                this.$Message.success(res.msg);
+              } else {
+                this.$Message.error(res.msg);
+              }
+              this.$store.dispatch('getAllHost');
+              this.onClickShowContainerInfoBtn(this.showHostIndex);
+            })
+          }
+        });
       },
     }
   };

@@ -11,6 +11,9 @@ import animated from 'animate.css';
 import {codemirror} from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 
+import axios from 'axios';
+Vue.prototype.$axios = axios;
+
 Vue.use(ViewUI);
 Vue.use(animated);
 Vue.use(codemirror);
