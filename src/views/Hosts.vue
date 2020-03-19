@@ -63,10 +63,15 @@
         </Card>
 
         <div style="text-align: center">
-          <ButtonGroup size="large">
-            <Button @click="onClickWatchBtn" type="success">打开实时监控</Button>
-            <Button @click="onClickCloseWatchBtn" type="warning">关闭实时监控</Button>
-          </ButtonGroup>
+          <Alert>
+            <h2>实时监控</h2>
+            <br>
+            <ButtonGroup size="large">
+              <Button @click="onClickWatchBtn" type="success">打开</Button>
+              <Button @click="handlePauseWatchBtnClick" type="primary">暂停</Button>
+              <Button @click="onClickCloseWatchBtn" type="warning">关闭</Button>
+            </ButtonGroup>
+          </Alert>
         </div>
 
         <Row :gutter="16">
@@ -169,13 +174,12 @@
         </Table>
 
         <div style="text-align: center; padding-top: 30px">
-          <Button type="primary" size="large" @click="showCreateContainerDrawer = true">
+          <Button type="primary" size="large" long @click="showCreateContainerDrawer = true">
             创建容器
           </Button>
         </div>
       </Drawer>
 
-      <!--      创建容器 drawer-->
       <Drawer title="创建容器" width="50" :closable="true" v-model="showCreateContainerDrawer">
         <Form v-model="createContainerForm" style="width: 500px;">
           <FormItem>
@@ -249,6 +253,11 @@
             </Row>
           </FormItem>
           <FormItem>
+            <div style="text-align: center">
+              <Alert type="warning" v-show="showCreateMsg">
+                {{createMsg}}
+              </Alert>
+            </div>
             <Button long type="primary" size="large" @click="createContainer">创建容器</Button>
           </FormItem>
         </Form>
@@ -364,6 +373,8 @@
         ],
         showHostIndex: 0,
 
+        showCreateMsg: false,
+        createMsg: '',
         createContainerForm: {
           ip: '',
           image_name: '',
@@ -423,7 +434,10 @@
       },
       // 关闭实时监控
       onClickCloseWatchBtn() {
-        // this.showWatch = false;
+        this.showWatch = false;
+        this.websocket.close();
+      },
+      handlePauseWatchBtnClick() {
         this.websocket.close();
       },
       // 收到 websocket 数据
@@ -705,7 +719,6 @@
       // 创建容器
       createContainer() {
         let f = {};
-        f.ip = this.showContainerInfo.hostIp;
         f.image_name = this.createContainerForm.image_name;
         f.container_name = this.createContainerForm.container_name;
         f.cmd = this.createContainerForm.cmd.split(' ');
@@ -713,8 +726,12 @@
         f.container_port_proto = this.createContainerForm.container_port_proto;
         f.container_port = this.createContainerForm.container_port;
         f.host_port = this.createContainerForm.host_port;
-        f.cpu_shares = parseInt(this.createContainerForm.cpu_shares);
-        f.memory = parseInt(this.createContainerForm.memory);
+        if (this.createContainerForm.cpu_shares !== '') {
+          f.cpu_shares = parseInt(this.createContainerForm.cpu_shares);
+        }
+        if (this.createContainerForm.memory !== '') {
+          f.memory = parseInt(this.createContainerForm.memory);
+        }
         f.volumes = [];
         for (let i = 0; i < this.createContainerForm.volumes.length; ++i) {
           f.volumes.push({
@@ -723,12 +740,18 @@
           })
         }
 
-        createContainer(f).then(res => {
-          if (res.code === 0) {
+
+        createContainer({
+          ip: this.showContainerInfo.hostIp,
+          createForm: f
+        }).then(res => {
+          if (res.status === 0) {
             this.$Message.success(res.msg);
           } else {
             this.$Message.error(res.msg);
           }
+          this.showCreateMsg = true;
+          this.createMsg = res.msg;
           this.$store.dispatch('getAllHost');
         })
       },
