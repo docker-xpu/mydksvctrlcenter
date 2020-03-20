@@ -5,10 +5,10 @@ import {
   listLicence,
   listHost,
   deleteLicence,
-  newLicence
+  newLicence,
 } from '../api/host';
 import {
-  listImages
+  listImages,
 } from '../api/images';
 import {
   listFiles,
@@ -96,7 +96,7 @@ export default new Vuex.Store({
     },
     // 删除一个文件服务器上的文件
     removeFile(context, query) {
-      removeFile(query).then(res=>{
+      removeFile(query).then(res => {
         if (res.code === 0) {
           context.dispatch('getAllFiles');
           Message.success(res.msg);

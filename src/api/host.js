@@ -61,4 +61,11 @@ export function deleteLicence(data) {
   })
 }
 
-
+// 获取指定宿主机的文件列表
+export function listHostFiles(query) {
+  return request({
+    url: 'sftp/list',
+    method: 'get',
+    params: query
+  })
+}

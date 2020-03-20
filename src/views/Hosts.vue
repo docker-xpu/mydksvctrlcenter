@@ -88,7 +88,9 @@
                 <Divider></Divider>
 
                 <div style="text-align: center">
-                  <Button type="primary" size="large" @click="onClickShowContainerInfoBtn(index)">详细信息</Button>
+                  <ButtonGroup>
+                    <Button type="primary" size="large" @click="onClickShowContainerInfoBtn(index)">容器信息</Button>
+                  </ButtonGroup>
                 </div>
 
                 <Divider></Divider>
@@ -109,6 +111,7 @@
         </Row>
       </Col>
 
+      <!--      容器信息-->
       <Drawer width="90" :closable="true" v-model="showContainerInfoDrawer">
         <div>
           <h2>
@@ -174,93 +177,100 @@
         </Table>
 
         <div style="text-align: center; padding-top: 30px">
-          <Button type="primary" size="large" long @click="showCreateContainerDrawer = true">
+          <Button type="primary" size="large" long @click="handleCreateContainerBtnClick">
             创建容器
           </Button>
         </div>
       </Drawer>
 
-      <Drawer title="创建容器" width="50" :closable="true" v-model="showCreateContainerDrawer">
-        <Form v-model="createContainerForm" style="width: 500px;">
-          <FormItem>
-            <label>容器名：
-              <Input type="text" v-model="createContainerForm.container_name" placeholder="例如：mynginx1"></Input>
-            </label>
-            <label>镜像名：
-              <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>
-            </label>
-            <label>Command：
-              <Input type="textarea" v-model="createContainerForm.cmd" placeholder="例如：nginx -g daemon off;"></Input>
-            </label>
-          </FormItem>
-          <FormItem
-                  v-for="(item, index) in createContainerForm.volumes"
-                  :key="index"
-                  v-if="item.status">
-            <Row>
-              <Col span="10">
-                <label>宿主机路径：
-                  <Input v-model="item.host_volume" placeholder="例如：/home/ahojcn"></Input>
+      <!--      创建容器-->
+      <Drawer title="创建容器" width="60" :closable="true" v-model="showCreateContainerDrawer">
+        <Row :gutter="16">
+          <Col span="8">
+          </Col>
+          <Col span="16">
+            <Form v-model="createContainerForm">
+              <FormItem>
+                <label>容器名：
+                  <Input type="text" v-model="createContainerForm.container_name" placeholder="例如：mynginx1"></Input>
                 </label>
-              </Col>
-              <Col span="10">
-                <label>容器内路径：
-                  <Input v-model="item.container_volume" placeholder="例如：/volume1"></Input>
+                <label>镜像名：
+                  <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>
                 </label>
-              </Col>
-              <Col span="4">
-                <Button icon="md-add" type="primary" ghost @click="handleAddVolume">增加</Button>
-                <Button type="error" ghost icon="md-arrow-round-back" @click="handleRemoveVolume(index)">删除</Button>
-              </Col>
-            </Row>
-          </FormItem>
-          <FormItem>
-            <label>工作目录：
-              <Input type="text" v-model="createContainerForm.working_dir" placeholder="例如：/root"></Input>
-            </label>
-          </FormItem>
-          <FormItem>
-            <Row>
-              <Col span="8">
-                <label>网络协议：
-                  <Input type="text" v-model="createContainerForm.container_port_proto" placeholder="例如：tcp"></Input>
+                <label>Command：
+                  <Input type="textarea" v-model="createContainerForm.cmd" placeholder="例如：nginx -g daemon off;"></Input>
                 </label>
-              </Col>
-              <Col span="8">
-                <label>主机端口：
-                  <Input type="text" v-model="createContainerForm.host_port" placeholder="例如：8081"></Input>
+              </FormItem>
+              <FormItem
+                      v-for="(item, index) in createContainerForm.volumes"
+                      :key="index"
+                      v-if="item.status">
+                <Row>
+                  <Col span="10">
+                    <label>宿主机路径：
+                      <Input v-model="item.host_volume" placeholder="例如：/home/ahojcn"></Input>
+                    </label>
+                  </Col>
+                  <Col span="10">
+                    <label>容器内路径：
+                      <Input v-model="item.container_volume" placeholder="例如：/volume1"></Input>
+                    </label>
+                  </Col>
+                  <Col span="4">
+                    <Button icon="md-add" type="primary" ghost @click="handleAddVolume">增加</Button>
+                    <Button type="error" ghost icon="md-arrow-round-back" @click="handleRemoveVolume(index)">删除</Button>
+                  </Col>
+                </Row>
+              </FormItem>
+              <FormItem>
+                <label>工作目录：
+                  <Input type="text" v-model="createContainerForm.working_dir" placeholder="例如：/root"></Input>
                 </label>
-              </Col>
-              <Col span="8">
-                <label>容器端口：
-                  <Input type="text" v-model="createContainerForm.container_port" placeholder="例如：80"></Input>
-                </label>
-              </Col>
-            </Row>
-          </FormItem>
-          <FormItem>
-            <Row>
-              <Col span="12">
-                <label>CPU限制：
-                  <Input type="text" v-model="createContainerForm.cpu_shares" placeholder="例如：1024"></Input>
-                </label>
-              </Col>
-              <Col span="12">
-                <label>内存限制：
-                  <Input type="text" v-model="createContainerForm.memory" placeholder="例如：40000000"></Input>
-                </label>
-              </Col>
-            </Row>
-          </FormItem>
-          <FormItem>
-            <div style="text-align: center">
-              <Alert type="warning" v-show="showCreateMsg">
-                {{createMsg}}
-              </Alert>
-            </div>
-            <Button long type="primary" size="large" @click="createContainer">创建容器</Button>
-          </FormItem>
-        </Form>
+              </FormItem>
+              <FormItem>
+                <Row>
+                  <Col span="8">
+                    <label>网络协议：
+                      <Input type="text" v-model="createContainerForm.container_port_proto" placeholder="例如：tcp"></Input>
+                    </label>
+                  </Col>
+                  <Col span="8">
+                    <label>主机端口：
+                      <Input type="text" v-model="createContainerForm.host_port" placeholder="例如：8081"></Input>
+                    </label>
+                  </Col>
+                  <Col span="8">
+                    <label>容器端口：
+                      <Input type="text" v-model="createContainerForm.container_port" placeholder="例如：80"></Input>
+                    </label>
+                  </Col>
+                </Row>
+              </FormItem>
+              <FormItem>
+                <Row>
+                  <Col span="12">
+                    <label>CPU限制：
+                      <Input type="text" v-model="createContainerForm.cpu_shares" placeholder="例如：1024"></Input>
+                    </label>
+                  </Col>
+                  <Col span="12">
+                    <label>内存限制：
+                      <Input type="text" v-model="createContainerForm.memory" placeholder="例如：40000000"></Input>
+                    </label>
+                  </Col>
+                </Row>
+              </FormItem>
+              <FormItem>
+                <div style="text-align: center">
+                  <Alert type="warning" v-show="showCreateMsg">
+                    {{createMsg}}
+                  </Alert>
+                </div>
+                <Button long type="primary" size="large" @click="createContainer">创建容器</Button>
+              </FormItem>
+            </Form>
+          </Col>
+        </Row>
       </Drawer>
 
       <!--      凭据-->
@@ -303,7 +313,7 @@
 
 <script>
   import store from "../store/index";
-  import {connHost, initHost, removeHost} from "../api/host";
+  import {connHost, initHost, removeHost, listHostFiles} from "../api/host";
   import {startContainer, createContainer, stopContainer, removeContainer} from '../api/container'
 
   // require('echarts/lib/chart/line');
@@ -316,6 +326,7 @@
     name: "Hosts",
     data() {
       return {
+        // 主机凭据
         licence: {
           name: "",
           pwd: ""
@@ -372,6 +383,8 @@
           },
         ],
         showHostIndex: 0,
+
+        hostFiles: [],  // 宿主机上的文件列表
 
         showCreateMsg: false,
         createMsg: '',
@@ -753,6 +766,17 @@
           this.createMsg = res.msg;
           this.$store.dispatch('getAllHost');
         })
+      },
+
+      // 当前及创建容器按钮
+      handleCreateContainerBtnClick() {
+        this.showCreateContainerDrawer = true;
+        listHostFiles({
+          ip: this.showContainerInfo.hostIp,
+          path: '/'
+        }).then(res=>{
+          console.log(res);
+        });
       },
     }
   };
