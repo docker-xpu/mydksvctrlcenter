@@ -1,6 +1,12 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Home from '../views/Home';
+
+import Logo from '../components/Logo';
+import About from '../views/About';
+import Hosts from '../views/Hosts';
+import Images from '../views/Images';
+import Editor from '../views/Editor';
 
 Vue.use(VueRouter);
 
@@ -13,27 +19,27 @@ const routes = [
       {
         path: '/',
         name: 'Logo',
-        component: () => import('../components/Logo')
+        component: Logo,
       },
       {
         path: '/about',
         name: 'About',
-        component: () => import('../views/About')
+        component: About
       },
       {
         path: '/hosts',
         name: 'Hosts',
-        component: () => import('../views/Hosts')
+        component: Hosts
       },
       {
         path: '/images',
         name: 'Images',
-        component: () => import('../views/Images')
+        component: Images
       },
       {
         path: '/editor',
         name: 'Editor',
-        component: () => import('../views/Editor')
+        component: Editor
       },
     ],
   },

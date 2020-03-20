@@ -274,6 +274,7 @@
           <Col span="8">
             <Card :padding="0">
               <Input v-model="hostFiles.name" @on-enter="handleHostFilesChange(hostFiles.name)"></Input>
+<!--              @on-click="handleHostFilesChange(hostFiles.name + '/' + item.name)"-->
               <CellGroup>
                 <Cell v-for="(item, index) in hostFiles.children" :key="index" :title="item.name">
                   <div slot="label">
