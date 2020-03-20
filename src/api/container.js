@@ -36,3 +36,12 @@ export function createContainer(data) {
     data
   })
 }
+
+// 打包容器 -> 镜像
+export function pushContainer(data) {
+  return requestJson({
+    url: 'change/to-image',
+    method: 'post',
+    data
+  })
+}

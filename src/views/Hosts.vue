@@ -170,9 +170,10 @@
             <span v-for="(mnt, index) in row.container.mounts" :key="index">{{ mnt.Destination }}:{{mnt.Source}}</span>
           </template>
           <template slot-scope="{ row, index }" slot="action">
-            <Button type="success" size="small" @click="startContainer(row)" long>启动</Button>
-            <Button type="primary" size="small" @click="stopContainer(row)" long>停止</Button>
-            <Button type="error" size="small" @click="removeContainer(row)" long>删除</Button>
+            <Button icon="md-arrow-dropright-circle" type="success" size="small" @click="startContainer(row)" long>启动</Button>
+            <Button icon="md-square" type="primary" size="small" @click="stopContainer(row)" long>停止</Button>
+            <Button icon="ios-cloud-upload" type="warning" size="small" @click="pushContainer(row)" long>推送</Button>
+            <Button icon="md-remove-circle" type="error" size="small" @click="removeContainer(row)" long>删除</Button>
           </template>
         </Table>
 
@@ -186,8 +187,6 @@
       <!--      创建容器-->
       <Drawer title="创建容器" width="60" :closable="true" v-model="showCreateContainerDrawer">
         <Row :gutter="16">
-          <Col span="8">
-          </Col>
           <Col span="16">
             <Form v-model="createContainerForm">
               <FormItem>
@@ -198,7 +197,8 @@
                   <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>
                 </label>
                 <label>Command：
-                  <Input type="textarea" v-model="createContainerForm.cmd" placeholder="例如：nginx -g daemon off;"></Input>
+                  <Input type="textarea" v-model="createContainerForm.cmd"
+                         placeholder="例如：nginx -g daemon off;"></Input>
                 </label>
               </FormItem>
               <FormItem
@@ -231,7 +231,8 @@
                 <Row>
                   <Col span="8">
                     <label>网络协议：
-                      <Input type="text" v-model="createContainerForm.container_port_proto" placeholder="例如：tcp"></Input>
+                      <Input type="text" v-model="createContainerForm.container_port_proto"
+                             placeholder="例如：tcp"></Input>
                     </label>
                   </Col>
                   <Col span="8">
@@ -269,6 +270,21 @@
                 <Button long type="primary" size="large" @click="createContainer">创建容器</Button>
               </FormItem>
             </Form>
+          </Col>
+          <Col span="8">
+            <Card :padding="0">
+              <Input v-model="hostFiles.name" @on-enter="handleHostFilesChange(hostFiles.name)"></Input>
+              <CellGroup>
+                <Cell v-for="(item, index) in hostFiles.children" :key="index" :title="item.name">
+                  <div slot="label">
+                    {{item.size}}
+                  </div>
+                  <div slot="extra">
+                    <Icon :type="item.is_dir ? 'md-folder':'md-paper'"></Icon>
+                  </div>
+                </Cell>
+              </CellGroup>
+            </Card>
           </Col>
         </Row>
       </Drawer>
@@ -314,7 +330,7 @@
 <script>
   import store from "../store/index";
   import {connHost, initHost, removeHost, listHostFiles} from "../api/host";
-  import {startContainer, createContainer, stopContainer, removeContainer} from '../api/container'
+  import {startContainer, createContainer, stopContainer, removeContainer, pushContainer} from '../api/container'
 
   // require('echarts/lib/chart/line');
 
@@ -409,6 +425,8 @@
           cpu_shares: '',
           memory: '',
         },
+
+        pushContainerForm: {},
 
         websocket: undefined,
         showWatch: false,  // 是否查看实时监控
@@ -713,6 +731,36 @@
           }
         });
       },
+      // 打包容器为镜像
+      pushContainer(row) {
+        this.pushContainerForm = {
+          image_name: row.container.names[0],
+          target_image_name: `${row.container.names[0]}:版本号`,
+          ip: this.showContainerInfo.hostIp
+        };
+
+        this.$Modal.confirm({
+          title: '输入镜像名',
+          render: (h) => {
+            return h('Input', {
+              props: {
+                value: this.pushContainerForm.target_image_name,
+                autofocus: true,
+                placeholder: `例如：${this.pushContainerForm.image_name}:版本号`
+              }
+            })
+          },
+          onOk: () => {
+            pushContainer(this.pushContainerForm).then(res=>{
+              if (res.code === 0) {
+                this.$Message.success(res.msg);
+              } else {
+                this.$Message.error(res.msg);
+              }
+            })
+          },
+        })
+      },
 
       // 创建容器当添加 volume
       handleAddVolume() {
@@ -770,12 +818,25 @@
 
       // 当前及创建容器按钮
       handleCreateContainerBtnClick() {
-        this.showCreateContainerDrawer = true;
         listHostFiles({
           ip: this.showContainerInfo.hostIp,
           path: '/'
-        }).then(res=>{
-          console.log(res);
+        }).then(res => {
+          if (res.status === 0) {
+            this.hostFiles = res.data;
+          }
+          this.showCreateContainerDrawer = true;
+        });
+      },
+      // 改变浏览的目录
+      handleHostFilesChange(path='/root') {
+        listHostFiles({
+          ip: this.showContainerInfo.hostIp,
+          path: path
+        }).then(res => {
+          if (res.status === 0) {
+            this.hostFiles = res.data;
+          }
         });
       },
     }
