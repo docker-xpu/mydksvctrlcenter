@@ -13,6 +13,10 @@
             <label>文件名：
               <Input v-model="codeName" type="text" style="width: 200px"></Input>
             </label>
+            <Button icon="ios-send" type="primary" @click="handleSaveCodeBtnClick">保存此代码</Button>
+
+            <br>
+
             <Select placeholder="代码高亮显示" style="width: 200px" @on-change="handleModeChange">
               <Option v-for="item in modes" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
@@ -20,19 +24,22 @@
             <Select placeholder="背景颜色" style="width: 200px" @on-change="handleSelectTheme">
               <Option v-for="item in themes" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
-            <Button icon="ios-send" type="primary" @click="handleSaveCodeBtnClick">保存此代码</Button>
+
+            <Select placeholder="快捷键" style="width: 150px" @on-change="handleKeyMapChange">
+              <Option v-for="item in keyMaps" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
           </div>
 
           <textarea ref="editor"></textarea>
 
-<!--          <Divider>-->
-<!--            主题颜色-->
-<!--          </Divider>-->
-<!--          <div style="text-align: center">-->
-<!--            <Button type="text" v-for="(item, index) in themes" :key="index" @click="selectTheme(item)">-->
-<!--              {{item}}-->
-<!--            </Button>-->
-<!--          </div>-->
+          <!--          <Divider>-->
+          <!--            主题颜色-->
+          <!--          </Divider>-->
+          <!--          <div style="text-align: center">-->
+          <!--            <Button type="text" v-for="(item, index) in themes" :key="index" @click="selectTheme(item)">-->
+          <!--              {{item}}-->
+          <!--            </Button>-->
+          <!--          </div>-->
         </Card>
       </Col>
 
@@ -64,6 +71,12 @@
 
   let CodeMirror = require("codemirror/lib/codemirror");
 
+  require('codemirror/keymap/vim.js');
+  require('codemirror/keymap/sublime.js');
+  require('codemirror/keymap/emacs.js');
+
+  require('codemirror/addon/selection/active-line');
+
   require("codemirror/mode/python/python.js");
   require("codemirror/mode/vue/vue.js");
   require("codemirror/mode/go/go.js");
@@ -75,6 +88,8 @@
   require("codemirror/mode/sql/sql.js");
   require("codemirror/mode/vb/vb.js");
   require("codemirror/mode/yaml/yaml.js");
+  require("codemirror/mode/xml/xml.js");
+  require("codemirror/mode/php/php.js");
 
   require('codemirror/addon/fold/foldcode.js');
   require('codemirror/addon/fold/foldgutter.js');
@@ -83,6 +98,9 @@
   require('codemirror/addon/fold/indent-fold.js');
   require('codemirror/addon/fold/markdown-fold.js');
   require('codemirror/addon/fold/comment-fold.js');
+
+  require("codemirror/addon/hint/show-hint");
+  require("codemirror/addon/hint/sql-hint");
 
   require('codemirror/theme/3024-night.css');
   require('codemirror/theme/3024-day.css');
@@ -111,7 +129,9 @@
           {value: 'idea', label: 'idea'},
         ],
         modes: [
+          {value: 'php', label: 'php'},
           {value: 'python', label: 'python'},
+          {value: 'javascript', label: 'javascript'},
           {value: 'vue', label: 'vue'},
           {value: 'go', label: 'go'},
           {value: 'lua', label: 'lua'},
@@ -122,6 +142,12 @@
           {value: 'sql', label: 'sql'},
           {value: 'vb', label: 'vb'},
           {value: 'yaml', label: 'yaml'},
+          {value: 'xml', label: 'xml'},
+        ],
+        keyMaps: [
+          {value: 'vim', label: 'vim'},
+          {value: 'sublime', label: 'sublime'},
+          {value: 'emacs', label: 'emacs'},
         ],
         editor: {},
       }
@@ -134,12 +160,17 @@
         smartIndent: true,
         lineNumbers: true,
         matchBrackets: true,
+        extraKeys: {'Ctrl': 'autocomplete'},//ctrl可以弹出选择项
+        styleActiveLine: true
       });
       this.editor.on('changes', () => {
         this.content = [];
         for (let i = 0; i < this.editor.doc.children[0].lines.length; ++i) {
           this.content.push(this.editor.doc.children[0].lines[i].text)
         }
+      });
+      this.editor.on('onchange', () => {
+        this.editor.showHint()
       });
 
       // 获取文件列表
@@ -152,6 +183,9 @@
       },
       handleModeChange(val) {
         this.editor.setOption("mode", val);
+      },
+      handleKeyMapChange(val) {
+        this.editor.setOption("keyMap", val);
       },
 
       // 查看文件详情
