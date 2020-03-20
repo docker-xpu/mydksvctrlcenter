@@ -13,19 +13,26 @@
             <label>文件名：
               <Input v-model="codeName" type="text" style="width: 200px"></Input>
             </label>
+            <Select placeholder="代码高亮显示" style="width: 200px" @on-change="handleModeChange">
+              <Option v-for="item in modes" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+
+            <Select placeholder="背景颜色" style="width: 200px" @on-change="handleSelectTheme">
+              <Option v-for="item in themes" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
             <Button icon="ios-send" type="primary" @click="handleSaveCodeBtnClick">保存此代码</Button>
           </div>
 
           <textarea ref="editor"></textarea>
 
-          <Divider>
-            主题颜色
-          </Divider>
-          <div style="text-align: center">
-            <Button type="text" v-for="(item, index) in themes" :key="index" @click="selectTheme(item)">
-              {{item}}
-            </Button>
-          </div>
+<!--          <Divider>-->
+<!--            主题颜色-->
+<!--          </Divider>-->
+<!--          <div style="text-align: center">-->
+<!--            <Button type="text" v-for="(item, index) in themes" :key="index" @click="selectTheme(item)">-->
+<!--              {{item}}-->
+<!--            </Button>-->
+<!--          </div>-->
         </Card>
       </Col>
 
@@ -58,6 +65,17 @@
   let CodeMirror = require("codemirror/lib/codemirror");
 
   require("codemirror/mode/python/python.js");
+  require("codemirror/mode/vue/vue.js");
+  require("codemirror/mode/go/go.js");
+  require("codemirror/mode/lua/lua.js");
+  require("codemirror/mode/markdown/markdown.js");
+  require("codemirror/mode/nginx/nginx.js");
+  require("codemirror/mode/ruby/ruby.js");
+  require("codemirror/mode/rust/rust.js");
+  require("codemirror/mode/sql/sql.js");
+  require("codemirror/mode/vb/vb.js");
+  require("codemirror/mode/yaml/yaml.js");
+
   require('codemirror/addon/fold/foldcode.js');
   require('codemirror/addon/fold/foldgutter.js');
   require('codemirror/addon/fold/brace-fold.js');
@@ -83,14 +101,27 @@
         content: [],
         codeName: 'a.txt',
         themes: [
-          'material',
-          'material-darker',
-          '3024-night',
-          '3024-day',
-          'darcula',
-          'dracula',
-          'eclipse',
-          'idea',
+          {value: 'material', label: 'material'},
+          {value: 'material-darker', label: 'material-darker'},
+          {value: '3024-night', label: '3024-night'},
+          {value: '3024-day', label: '3024-day'},
+          {value: 'darcula', label: 'darcula'},
+          {value: 'dracula', label: 'dracula'},
+          {value: 'eclipse', label: 'eclipse'},
+          {value: 'idea', label: 'idea'},
+        ],
+        modes: [
+          {value: 'python', label: 'python'},
+          {value: 'vue', label: 'vue'},
+          {value: 'go', label: 'go'},
+          {value: 'lua', label: 'lua'},
+          {value: 'markdown', label: 'markdown'},
+          {value: 'nginx', label: 'nginx'},
+          {value: 'ruby', label: 'ruby'},
+          {value: 'rust', label: 'rust'},
+          {value: 'sql', label: 'sql'},
+          {value: 'vb', label: 'vb'},
+          {value: 'yaml', label: 'yaml'},
         ],
         editor: {},
       }
@@ -115,9 +146,12 @@
       this.$store.dispatch('getAllFiles');
     },
     methods: {
-      selectTheme(name) {
+      handleSelectTheme(val) {
         // this.$refs.editor.setOption("theme", name);
-        this.editor.setOption("theme", name);
+        this.editor.setOption("theme", val);
+      },
+      handleModeChange(val) {
+        this.editor.setOption("mode", val);
       },
 
       // 查看文件详情
@@ -152,7 +186,7 @@
         saveCode({
           filename: this.codeName,
           code: this.content
-        }).then(res=>{
+        }).then(res => {
           if (res.code === 0) {
             this.$Message.success(res.msg);
             this.$store.dispatch('getAllFiles');
