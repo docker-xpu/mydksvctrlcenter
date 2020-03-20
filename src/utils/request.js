@@ -33,6 +33,7 @@ service.interceptors.request.use(
       store.state.loading.push(Message.loading({
         duration: 0,
         content: '数据载入中...',
+        closable: true
       }));
 
       return config;

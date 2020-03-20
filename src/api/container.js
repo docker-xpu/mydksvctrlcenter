@@ -1,5 +1,5 @@
-import request from '../utils/request'
-import requestJson from '../utils/request-json'
+import request from '../utils/request';
+import requestJson from '../utils/request-json';
 
 // 启动容器
 export function startContainer(data) {

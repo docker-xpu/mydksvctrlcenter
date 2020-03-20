@@ -31,6 +31,10 @@
             <Icon type="ios-apps"></Icon>
             <span>集群管理</span>
           </MenuItem>
+          <MenuItem name="iCode" to="Editor">
+            <Icon type="ios-play"></Icon>
+            <span>i - Code</span>
+          </MenuItem>
 
           <MenuItem name="about" to="about">
             <Icon type="md-infinite"></Icon>
