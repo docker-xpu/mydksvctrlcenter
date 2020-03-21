@@ -153,9 +153,9 @@
             <span>{{ row.container.image }}</span>
           </template>
           <template slot-scope="{ row }" slot="net">
-            <span>IP地址：{{ row.container.networkSettings.networks.bridge.ipaddress }}</span>
+            <span>IP地址：{{ row.container.networkSettings.networks.bridge.ipaddress}}</span>
             <br>
-            <span>网关：{{ row.container.networkSettings.networks.bridge.gateway }}</span>
+            <span>网关：{{ row.container.networkSettings.networks.bridge.gateway}}</span>
             <br>
             <span v-for="(item, index) in row.container.ports" :key="index">{{ item.type }}/{{item.ip}}-{{item.privatePort}}:{{item.publicPort}}</span>
           </template>
@@ -177,7 +177,8 @@
             <span v-for="(mnt, index) in row.container.mounts" :key="index">{{ mnt.Destination }}:{{mnt.Source}}</span>
           </template>
           <template slot-scope="{ row, index }" slot="action">
-            <Button icon="md-arrow-dropright-circle" type="success" size="small" @click="startContainer(row)" long>启动</Button>
+            <Button icon="md-arrow-dropright-circle" type="success" size="small" @click="startContainer(row)" long>启动
+            </Button>
             <Button icon="md-square" type="primary" size="small" @click="stopContainer(row)" long>停止</Button>
             <Button icon="ios-cloud-upload" type="warning" size="small" @click="pushContainer(row)" long>推送</Button>
             <Button icon="md-remove-circle" type="error" size="small" @click="removeContainer(row)" long>删除</Button>
@@ -281,7 +282,7 @@
           <Col span="8">
             <Card :padding="0">
               <Input v-model="hostFiles.name" @on-enter="handleHostFilesChange(hostFiles.name)"></Input>
-<!--              @on-click="handleHostFilesChange(hostFiles.name + '/' + item.name)"-->
+              <!--              @on-click="handleHostFilesChange(hostFiles.name + '/' + item.name)"-->
               <CellGroup>
                 <Cell v-for="(item, index) in hostFiles.children" :key="index" :title="item.name">
                   <div slot="label">
@@ -759,7 +760,7 @@
             })
           },
           onOk: () => {
-            pushContainer(this.pushContainerForm).then(res=>{
+            pushContainer(this.pushContainerForm).then(res => {
               if (res.code === 0) {
                 this.$Message.success(res.msg);
               } else {
@@ -837,7 +838,7 @@
         });
       },
       // 改变浏览的目录
-      handleHostFilesChange(path='/root') {
+      handleHostFilesChange(path = '/root') {
         listHostFiles({
           ip: this.showContainerInfo.hostIp,
           path: path

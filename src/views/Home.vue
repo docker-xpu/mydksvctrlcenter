@@ -16,29 +16,28 @@
         <Menu theme="dark" width="auto" :class="menuitemClasses">
           <MenuItem name="hosts" to="hosts">
             <Icon type="logo-windows"></Icon>
-            <span>主机管理</span>
+            <span>主机</span>
           </MenuItem>
-          <!-- todo -->
           <MenuItem name="images" to="images">
             <Icon type="ios-appstore"></Icon>
-            <span>镜像管理</span>
+            <span>镜像</span>
           </MenuItem>
-          <MenuItem name="networks">
+          <MenuItem name="networks" to="network">
             <Icon type="ios-globe"></Icon>
-            <span>网络管理</span>
+            <span>网络</span>
           </MenuItem>
-          <MenuItem name="di">
+          <MenuItem name="di" to="cluster">
             <Icon type="ios-apps"></Icon>
-            <span>集群管理</span>
+            <span>集群</span>
           </MenuItem>
           <MenuItem name="iCode" to="Editor">
             <Icon type="ios-play"></Icon>
-            <span>i - Code</span>
+            <span>iCode</span>
           </MenuItem>
 
           <MenuItem name="about" to="about">
             <Icon type="md-infinite"></Icon>
-            <span>关于我们</span>
+            <span>关于</span>
           </MenuItem>
         </Menu>
       </Sider>

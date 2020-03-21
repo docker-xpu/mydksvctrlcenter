@@ -12,6 +12,7 @@ import {codemirror} from 'vue-codemirror';
 import 'codemirror/lib/codemirror.css';
 
 import axios from 'axios';
+
 Vue.prototype.$axios = axios;
 
 Vue.use(ViewUI);
@@ -26,6 +27,10 @@ ViewUI.LoadingBar.config({
 
 router.beforeEach((to, from, next) => {
   ViewUI.LoadingBar.start();
+  /* 路由发生变化修改页面title */
+  if (to.meta.title) {
+    document.title = to.meta.title + ' - 筋斗云'
+  }
   next();
 });
 
