@@ -25,6 +25,11 @@ ViewUI.LoadingBar.config({
   height: 5
 });
 
+ViewUI.Message.config({
+  top: 60,
+  duration: 6,
+});
+
 router.beforeEach((to, from, next) => {
   ViewUI.LoadingBar.start();
   /* 路由发生变化修改页面title */
