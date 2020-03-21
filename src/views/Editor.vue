@@ -31,15 +31,6 @@
           </div>
 
           <textarea ref="editor"></textarea>
-
-          <!--          <Divider>-->
-          <!--            主题颜色-->
-          <!--          </Divider>-->
-          <!--          <div style="text-align: center">-->
-          <!--            <Button type="text" v-for="(item, index) in themes" :key="index" @click="selectTheme(item)">-->
-          <!--              {{item}}-->
-          <!--            </Button>-->
-          <!--          </div>-->
         </Card>
       </Col>
 

@@ -78,6 +78,7 @@
             }).then(res => {
               if (res.code === 0) {
                 this.$Message.success(res.msg);
+                this.$store.dispatch('getAllImages');
               } else {
                 this.$Message.error(res.msg);
               }
