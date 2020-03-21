@@ -610,7 +610,9 @@
               background: true,
               content: res.msg
             });
-            this.$store.dispatch("getAllHost");
+            setTimeout(()=>{
+              this.$store.dispatch("getAllHost");
+            }, 3000);
           } else {
             this.$Message.error({
               background: true,
@@ -825,7 +827,7 @@
         })
       },
 
-      // 当前及创建容器按钮
+      // 当点击创建容器按钮
       handleCreateContainerBtnClick() {
         listHostFiles({
           ip: this.showContainerInfo.hostIp,

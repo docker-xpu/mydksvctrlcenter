@@ -26,7 +26,7 @@ ViewUI.LoadingBar.config({
 });
 
 ViewUI.Message.config({
-  top: 60,
+  top: 50,
   duration: 6,
 });
 

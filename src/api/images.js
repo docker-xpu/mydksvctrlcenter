@@ -7,3 +7,12 @@ export function listImages() {
     method: 'get',
   })
 }
+
+// 删除镜像
+export function removeImages(data) {
+  return request({
+    url: 'image/delete',
+    method: 'post',
+    data
+  })
+}
