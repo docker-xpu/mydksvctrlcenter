@@ -75,7 +75,7 @@
         </div>
 
         <Row :gutter="16">
-          <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 12, offset: 0 }" v-for="(item, index) in $store.state.hosts"
+          <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 24, offset: 0 }" v-for="(item, index) in $store.state.hosts"
                :key="index">
             <div style="padding-bottom: 20px">
               <Card>
@@ -94,12 +94,19 @@
                 </div>
 
                 <Divider></Divider>
-                <Tag color="blue">{{item.hostOs}} {{item.hostPlatformOs}} {{item.hostKernelVersion}}</Tag>
-                <Tag color="magenta">物理CPU{{item.physical_cores}}核</Tag>
-                <Tag color="red">逻辑CPU{{item.logical_cores}}核</Tag>
-                <Tag color="orange">磁盘大小{{(item.disk_total/1024/1024/1024).toFixed(1)}}GB</Tag>
-                <Tag color="orange">磁盘可用{{(item.disk_free/1024/1024/1024).toFixed(1)}}GB</Tag>
-                <Tag color="purple">内存{{(item.memTotal/1024/1024/1024).toFixed(1)}}GB</Tag>
+                <div style="text-align: center">
+                  <Tag color="blue">{{item.hostOs}} {{item.hostPlatformOs}} {{item.hostKernelVersion}}</Tag>
+                  <Tag color="magenta">物理CPU{{item.physical_cores}}核</Tag>
+                  <Tag color="red">逻辑CPU{{item.logical_cores}}核</Tag>
+                  <Tag color="orange">磁盘大小{{(item.disk_total/1024/1024/1024).toFixed(1)}}GB</Tag>
+                  <Tag color="orange">磁盘可用{{(item.disk_free/1024/1024/1024).toFixed(1)}}GB</Tag>
+                  <Tag color="purple">内存{{(item.memTotal/1024/1024/1024).toFixed(1)}}GB</Tag>
+                  <Tag type="border" color="#FFA2D3">
+                    平均负载：1分钟{{(item.loadInfo.load.load1)}},
+                    5分钟{{(item.loadInfo.load.load5)}},
+                    15分钟{{(item.loadInfo.load.load15)}}
+                  </Tag>
+                </div>
 
                 <div v-if="showWatch" :id="index" style="width: 100%; height: 300px">
                   <!--                  {{item.hostIp}} | {{allData[index]}}-->
