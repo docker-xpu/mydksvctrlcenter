@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Button size="large" @click="showNetworkInfo = true">网络信息</Button>
+    <Button size="large" type="primary" long @click="showNetworkInfo = true">网络信息</Button>
 
     <Modal v-model="showNetworkInfo" :title="'主机 ' + ip + ' 的网络信息'">
       <CellGroup>
