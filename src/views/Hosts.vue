@@ -1,7 +1,9 @@
 <template>
   <div>
     <Row>
-      <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 18, offset: 0 }" style="padding-right: 20px">
+      <Col :md="{ span: 24, offset: 0 }"
+           :lg="{ span: 18, offset: 0 }"
+           style="padding-right: 20px">
         <Card title="主机管理" icon="logo-windows" shadow style="margin-bottom: 20px">
           <Row :gutter="16">
             <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 6, offset: 0 }">
@@ -88,9 +90,10 @@
                 <Divider></Divider>
 
                 <div style="text-align: center">
-                  <ButtonGroup>
-                    <Button type="primary" size="large" @click="onClickShowContainerInfoBtn(index)">容器信息</Button>
-                  </ButtonGroup>
+                    <Button type="primary" size="large"
+                            @click="onClickShowContainerInfoBtn(index)">容器信息
+                    </Button>
+                  <Network :ip="item.hostIp"></Network>
                 </div>
 
                 <Divider></Divider>
@@ -340,6 +343,7 @@
   import store from "../store/index";
   import {connHost, initHost, removeHost, listHostFiles} from "../api/host";
   import {startContainer, createContainer, stopContainer, removeContainer, pushContainer} from '../api/container'
+  import Network from "../components/Network";
 
   // require('echarts/lib/chart/line');
 
@@ -349,6 +353,7 @@
 
   export default {
     name: "Hosts",
+    components: {Network},
     data() {
       return {
         // 主机凭据
@@ -610,7 +615,7 @@
               background: true,
               content: res.msg
             });
-            setTimeout(()=>{
+            setTimeout(() => {
               this.$store.dispatch("getAllHost");
             }, 3000);
           } else {

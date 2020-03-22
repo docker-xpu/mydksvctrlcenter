@@ -22,10 +22,6 @@
             <Icon type="ios-appstore"></Icon>
             <span>镜像</span>
           </MenuItem>
-          <MenuItem name="networks" to="network">
-            <Icon type="ios-globe"></Icon>
-            <span>网络</span>
-          </MenuItem>
           <MenuItem name="di" to="cluster">
             <Icon type="ios-apps"></Icon>
             <span>集群</span>
