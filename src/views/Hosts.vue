@@ -673,30 +673,6 @@
             this.onClickShowContainerInfoBtn(this.showHostIndex);
           })
         });
-
-        // createContainer({
-        //   "image_name": "nginx",
-        //   "container_name": "mynginx4",
-        //   "cmd": [
-        //     "nginx",
-        //     "-g",
-        //     "daemon off;"
-        //   ],
-        //   "volumes": [
-        //     {
-        //       "host_volume": "/root/bin/",
-        //       "container_volume": "/containerVolume4"
-        //     }
-        //   ],
-        //   "working_dir": "",
-        //   "container_port_proto": "tcp",
-        //   "container_port": "80",
-        //   "host_port": "8090",
-        //   "cpu_shares": 1024,
-        //   "memory": 400000000
-        // }).then(res=>{
-        //   console.log(res)
-        // })
       },
       // 点击停止容器
       stopContainer(row) {
@@ -744,26 +720,47 @@
       },
       // 打包容器为镜像
       pushContainer(row) {
+        console.log(row);
         this.pushContainerForm = {
-          image_name: row.container.names[0],
-          target_image_name: `${row.container.names[0]}:版本号`,
-          ip: this.showContainerInfo.hostIp
+          container_name: row.container.id,
+          target_image_name: '',
+          ip: this.showContainerInfo.hostIp,
+          target_image_tag: '',
         };
 
         this.$Modal.confirm({
           title: '输入镜像名',
           render: (h) => {
-            return h('Input', {
-              props: {
-                value: this.pushContainerForm.target_image_name,
-                autofocus: true,
-                placeholder: `例如：${this.pushContainerForm.image_name}:版本号`
-              }
-            })
+            return h('div', [
+              h('Input', {
+                props: {
+                  value: this.pushContainerForm.target_image_name,
+                  autofocus: true,
+                  placeholder: `例如：mynginx`
+                },
+                on: {
+                  input: (val) => {
+                    this.pushContainerForm.target_image_name = val;
+                  }
+                }
+              }),
+              h('Input', {
+                props: {
+                  value: this.pushContainerForm.target_image_tag,
+                  autofocus: true,
+                  placeholder: `例如：0.1`
+                },
+                on: {
+                  input: (val) => {
+                    this.pushContainerForm.target_image_tag = val;
+                  }
+                }
+              })
+            ])
           },
           onOk: () => {
             pushContainer(this.pushContainerForm).then(res => {
-              if (res.code === 0) {
+              if (res.status === 0) {
                 this.$Message.success(res.msg);
               } else {
                 this.$Message.error(res.msg);
