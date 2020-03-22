@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home';
 
-import Logo from '../components/Logo';
+import Index from '../views/Index';
 import About from '../views/About';
 import Hosts from '../views/Hosts';
 import Images from '../views/Images';
@@ -19,8 +19,8 @@ const routes = [
     children: [
       {
         path: '/',
-        name: 'Logo',
-        component: Logo,
+        name: 'Index',
+        component: Index,
       },
       {
         path: '/about',

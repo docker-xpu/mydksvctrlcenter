@@ -1,10 +1,14 @@
 <template>
-  $END$
+<div>
+  <Logo width="500px"></Logo>
+</div>
 </template>
 
 <script>
+  import Logo from "../components/Logo";
   export default {
-    name: "Index"
+    name: "Index",
+    components: {Logo}
   }
 </script>
 

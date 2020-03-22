@@ -90,9 +90,9 @@
                 <Divider></Divider>
 
                 <div style="text-align: center">
-                    <Button type="primary" size="large"
-                            @click="onClickShowContainerInfoBtn(index)">容器信息
-                    </Button>
+                  <Button type="primary" size="large"
+                          @click="onClickShowContainerInfoBtn(index)">容器信息
+                  </Button>
                   <Network :ip="item.hostIp"></Network>
                 </div>
 
