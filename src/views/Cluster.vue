@@ -1,12 +1,22 @@
 <template>
-<h1>
-  集群
-</h1>
+  <div>
+    <Row :gutter="16">
+      <Col span="12">
+        <Create></Create>
+      </Col>
+      <Col span="12">
+        <List></List>
+      </Col>
+    </Row>
+  </div>
 </template>
 
 <script>
+  import Create from "./Cluster/Create";
+  import List from "./Cluster/List";
   export default {
-    name: "Cluster"
+    name: "Cluster",
+    components: {List, Create},
   }
 </script>
 

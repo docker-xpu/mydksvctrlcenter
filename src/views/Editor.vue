@@ -35,7 +35,7 @@
       </Col>
 
       <Col span="6">
-        <Card title="现有代码" :padding="0" style="width: 300px;">
+        <Card title="现有" :padding="0" style="width: 300px;">
           <CellGroup>
             <Cell v-for="(item, index) in $store.state.files" :title="item.name">
               <div slot="extra">

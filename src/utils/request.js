@@ -1,6 +1,6 @@
 import axios from 'axios';
 import store from '../store';
-import {Notice, LoadingBar, Message} from 'view-design';
+import {Notice, LoadingBar, Message, Spin} from 'view-design';
 
 // 一个 axios 实例
 const service = axios.create({

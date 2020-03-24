@@ -80,31 +80,29 @@
             v-model="showCreateContainer">
       <Row :gutter="16">
         <Col span="16">
-          <Form v-model="createContainerForm">
-            <FormItem>
-              <label>容器名：
-                <Input type="text" v-model="createContainerForm.container_name" placeholder="例如：mynginx1"></Input>
-              </label>
-              <label>镜像名：
-                <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>
-              </label>
-              <label>Command：
-                <Input type="textarea" v-model="createContainerForm.cmd"
-                       placeholder="例如：nginx -g daemon off;"></Input>
-              </label>
+          <Form v-model="createContainerForm" :label-width="100">
+            <FormItem label="容器名：">
+              <Input type="text" v-model="createContainerForm.container_name" placeholder="例如：mynginx1"></Input>
+            </FormItem>
+            <FormItem label="Command：">
+              <Input type="textarea" v-model="createContainerForm.cmd"
+                     placeholder="例如：nginx -g daemon off;"></Input>
+            </FormItem>
+            <FormItem label="镜像名：">
+              <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>
             </FormItem>
             <FormItem
                     v-for="(item, index) in createContainerForm.volumes"
                     :key="index"
-                    v-if="item.status">
+                    v-if="item.status" :label="'容器卷 ' + index + '：'">
               <Row>
                 <Col span="10">
-                  <label>宿主机路径：
+                  <label>宿主机路径
                     <Input v-model="item.host_volume" placeholder="例如：/home/ahojcn"></Input>
                   </label>
                 </Col>
                 <Col span="10">
-                  <label>容器内路径：
+                  <label>容器内路径
                     <Input v-model="item.container_volume" placeholder="例如：/volume1"></Input>
                   </label>
                 </Col>
@@ -114,32 +112,30 @@
                 </Col>
               </Row>
             </FormItem>
-            <FormItem>
-              <label>工作目录：
-                <Input type="text" v-model="createContainerForm.working_dir" placeholder="例如：/root"></Input>
-              </label>
+            <FormItem label="工作目录：">
+              <Input type="text" v-model="createContainerForm.working_dir" placeholder="例如：/root"></Input>
             </FormItem>
-            <FormItem>
+            <FormItem label="网络：">
               <Row>
                 <Col span="8">
-                  <label>网络协议：
+                  <label>网络协议
                     <Input type="text" v-model="createContainerForm.container_port_proto"
                            placeholder="例如：tcp"></Input>
                   </label>
                 </Col>
                 <Col span="8">
-                  <label>主机端口：
+                  <label>主机端口
                     <Input type="text" v-model="createContainerForm.host_port" placeholder="例如：8081"></Input>
                   </label>
                 </Col>
                 <Col span="8">
-                  <label>容器端口：
+                  <label>容器端口
                     <Input type="text" v-model="createContainerForm.container_port" placeholder="例如：80"></Input>
                   </label>
                 </Col>
               </Row>
             </FormItem>
-            <FormItem>
+            <FormItem label="资源限制：">
               <Row>
                 <Col span="12">
                   <label>CPU限制：

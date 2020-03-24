@@ -285,6 +285,7 @@
     methods: {
       // 查看监控按钮点击
       onClickWatchBtn() {
+        // todo 等获取到数据再打开。
         this.showWatch = true;
         this.websocket = new WebSocket(`ws://tim.natapp1.cc/getHostInfoWebSocket`);
         this.websocket.onopen = e => {
