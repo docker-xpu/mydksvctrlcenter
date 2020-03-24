@@ -106,21 +106,21 @@
 
                 <div style="text-align: center">
                   <Row :gutter="16">
-                    <Col span="12">
+                    <Col span="8">
                       <Network :ip="item.hostIp"></Network>
                     </Col>
-                    <Col span="12">
+                    <Col span="8">
                       <ContainerInfo :container-info="$store.state.hosts[index]"></ContainerInfo>
+                    </Col>
+                    <Col span="8">
+                      <HostFiles :host-ip="item.hostIp"></HostFiles>
                     </Col>
                   </Row>
                 </div>
 
                 <Divider></Divider>
 
-                <div v-if="showWatch" :id="index" style="width: 100%; height: 300px">
-                  <!--                  {{item.hostIp}} | {{allData[index]}}-->
-                  <!-- {{item}} -->
-                </div>
+                <div v-if="showWatch" :id="index" style="width: 100%; height: 300px"></div>
               </Card>
             </div>
           </Col>
@@ -171,10 +171,11 @@
   import Network from "../components/Network";
   import ContainerInfo from "../components/Container/ContainerInfo";
   import Logo from "../components/Logo";
+  import HostFiles from "../components/Hosts/HostFiles";
 
   export default {
     name: "Hosts",
-    components: {Logo, ContainerInfo, Network},
+    components: {HostFiles, Logo, ContainerInfo, Network},
     data() {
       return {
         // 主机凭据
@@ -234,8 +235,6 @@
           },
         ],
         showHostIndex: 0,
-
-        hostFiles: [],  // 宿主机上的文件列表
 
         showCreateMsg: false,
         createMsg: '',

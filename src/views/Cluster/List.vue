@@ -1,6 +1,6 @@
 <template>
 <div>
-  <Card title="集群列表" :bordered="false"></Card>
+  <Card title="现有集群" :bordered="false"></Card>
 </div>
 </template>
 

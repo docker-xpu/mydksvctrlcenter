@@ -68,7 +68,7 @@
       </Table>
 
       <div style="text-align: center; padding-top: 30px">
-        <Button type="primary" size="large" long @click="handleCreateContainerBtnClick">
+        <Button type="primary" size="large" long @click="showCreateContainer = true">
           创建容器
         </Button>
       </div>
@@ -160,20 +160,7 @@
           </Form>
         </Col>
         <Col span="8">
-          <Card :padding="0">
-            <Input v-model="hostFiles.name" @on-enter="handleHostFilesChange(hostFiles.name)"></Input>
-            <!--              @on-click="handleHostFilesChange(hostFiles.name + '/' + item.name)"-->
-            <CellGroup>
-              <Cell v-for="(item, index) in hostFiles.children" :key="index" :title="item.name">
-                <div slot="label">
-                  {{item.size}}
-                </div>
-                <div slot="extra">
-                  <Icon :type="item.is_dir ? 'md-folder':'md-paper'"></Icon>
-                </div>
-              </Cell>
-            </CellGroup>
-          </Card>
+          <HostFiles :host-ip="containerInfo.hostIp"></HostFiles>
         </Col>
       </Row>
     </Drawer>
@@ -181,11 +168,12 @@
 </template>
 
 <script>
-  import {listHostFiles} from "../../api/host";
   import {startContainer, createContainer, stopContainer, removeContainer, pushContainer} from '../../api/container';
+  import HostFiles from "../Hosts/HostFiles";
 
   export default {
     name: "ContainerInfo",
+    components: {HostFiles},
     props: {
       containerInfo: {},
     },
@@ -420,30 +408,6 @@
           this.createMsg = res.msg;
           this.$store.dispatch('getAllHost');
         })
-      },
-
-      // 当点击创建容器按钮
-      handleCreateContainerBtnClick() {
-        listHostFiles({
-          ip: this.containerInfo.hostIp,
-          path: '/'
-        }).then(res => {
-          if (res.status === 0) {
-            this.hostFiles = res.data;
-          }
-          this.showCreateContainer = true;
-        });
-      },
-      // 改变浏览的目录
-      handleHostFilesChange(path = '/root') {
-        listHostFiles({
-          ip: this.containerInfo.hostIp,
-          path: path
-        }).then(res => {
-          if (res.status === 0) {
-            this.hostFiles = res.data;
-          }
-        });
       },
     },
     mounted() {
