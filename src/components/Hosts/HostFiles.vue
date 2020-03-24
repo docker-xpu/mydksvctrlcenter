@@ -2,9 +2,11 @@
   <div>
     <Button type="primary" long size="large" @click="showHostFiles = true">主机文件</Button>
 
-    <Drawer v-model="showHostFiles" draggable title="主机文件" placement="left">
+    <Drawer width="50" v-model="showHostFiles" draggable title="宿主机文件" placement="left">
       <Card :padding="0">
-        <Input v-model="hostFiles.name" @on-enter="handleHostFilesChange(hostFiles.name)"></Input>
+        <div slot="title">
+          <Input v-model="hostFiles.name" placeholder="例如：/root/bin" @on-enter="handleHostFilesChange(hostFiles.name)"></Input>
+        </div>
         <CellGroup>
           <Cell v-for="(item, index) in hostFiles.children" :key="index" :title="item.name">
             <div slot="label">
@@ -22,9 +24,11 @@
 
 <script>
   import {listHostFiles} from "../../api/host";
+  import CloudFiles from "../Editor/CloudFiles";
 
   export default {
     name: "HostFiles",
+    components: {CloudFiles},
     props: ['hostIp'],
     data() {
       return {

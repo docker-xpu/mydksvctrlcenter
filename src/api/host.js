@@ -69,3 +69,12 @@ export function listHostFiles(query) {
     params: query
   })
 }
+
+// 分发文件至多个宿主机
+export function dispatchFile2Hosts(data) {
+  return request({
+    url: 'sftp/upload-list',
+    method: 'post',
+    data
+  })
+}

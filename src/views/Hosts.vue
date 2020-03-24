@@ -129,6 +129,8 @@
 
       <!--      凭据-->
       <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 6, offset: 0 }">
+        <CloudFiles style="padding-bottom: 20px"></CloudFiles>
+
         <Card title="已有凭据" icon="md-key" shadow style="width: 100%; margin-bottom: 20px">
           <CellGroup>
             <Cell
@@ -172,10 +174,11 @@
   import ContainerInfo from "../components/Container/ContainerInfo";
   import Logo from "../components/Logo";
   import HostFiles from "../components/Hosts/HostFiles";
+  import CloudFiles from "../components/Editor/CloudFiles";
 
   export default {
     name: "Hosts",
-    components: {HostFiles, Logo, ContainerInfo, Network},
+    components: {CloudFiles, HostFiles, Logo, ContainerInfo, Network},
     data() {
       return {
         // 主机凭据
@@ -284,8 +287,8 @@
     methods: {
       // 查看监控按钮点击
       onClickWatchBtn() {
-        // todo 等获取到数据再打开。
         this.showWatch = true;
+        this.$Message.loading('启动中请稍后');
         this.websocket = new WebSocket(`ws://tim.natapp1.cc/getHostInfoWebSocket`);
         this.websocket.onopen = e => {
           console.log("建立ws连接");
