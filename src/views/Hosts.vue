@@ -86,7 +86,7 @@
                   <Tag :color="item.hostStatus === 0 ? 'success': 'default'">{{item.hostStatusStr}}</Tag>
                 </div>
 
-                <Badge status="processing"></Badge>
+                <Badge status="success"></Badge>
                 {{item.hostIp}}
                 <div>
                   <Tag color="blue">{{item.hostOs}} {{item.hostPlatformOs}} {{item.hostKernelVersion}}</Tag>
@@ -170,10 +170,11 @@
   import {connHost, initHost, removeHost} from "../api/host";
   import Network from "../components/Network";
   import ContainerInfo from "../components/Container/ContainerInfo";
+  import Logo from "../components/Logo";
 
   export default {
     name: "Hosts",
-    components: {ContainerInfo, Network},
+    components: {Logo, ContainerInfo, Network},
     data() {
       return {
         // 主机凭据
