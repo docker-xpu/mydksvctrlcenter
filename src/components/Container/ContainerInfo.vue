@@ -85,8 +85,18 @@
               <Input type="text" v-model="createContainerForm.container_name" placeholder="例如：mynginx1"></Input>
             </FormItem>
             <FormItem label="Command：">
-              <Input type="textarea" v-model="createContainerForm.cmd"
-                     placeholder="例如：nginx -g daemon off;"></Input>
+              <Row v-for="(item, index) in createContainerForm.cmd"
+                   :key="index + 'cmd'" v-if="item.status">
+                <Col span="20">
+                  <label>启动时运行的命令{{index}}
+                    <Input type="text" v-model="item.value"></Input>
+                  </label>
+                </Col>
+                <Col span="4">
+                  <Button icon="md-add" type="primary" ghost @click="handleAddCmd">增加</Button>
+                  <Button type="error" ghost icon="md-arrow-round-back" @click="handleRemoveCmd(index)">删除</Button>
+                </Col>
+              </Row>
             </FormItem>
             <FormItem label="镜像名：">
               <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>
@@ -230,7 +240,14 @@
           ip: '',
           image_name: '',
           container_name: '',
-          cmd: '',  // 提交时候需要处理
+          cmd: [
+            {
+              value: '',
+              index: 1,
+              status: 1,
+            },
+          ],
+          cmdIndex: 1,
           volumes: [
             {
               host_volume: '',
@@ -294,9 +311,9 @@
               container_name: row.container.id,
               bol: true
             }).then(res => {
-              console.log(res);
               if (res.code === 0) {
                 this.$Message.success(res.msg);
+                this.$store.dispatch('getAllHost');
               } else {
                 this.$Message.error(res.msg);
               }
@@ -359,7 +376,6 @@
       // 创建容器当添加 volume
       handleAddVolume() {
         this.createContainerForm.volumesIndex++;
-        console.log(this.createContainerForm.volumes);
         this.createContainerForm.volumes.push({
           host_volume: '',
           container_volume: '',
@@ -369,14 +385,34 @@
       },
       // 删除 volume
       handleRemoveVolume(index) {
+        if (this.createContainerForm.volumes.length === 1) {
+          return;
+        }
         this.createContainerForm.volumes[index].status = 0;
       },
+      // 增加 cmd
+      handleAddCmd() {
+        this.createContainerForm.cmdIndex++;
+        this.createContainerForm.cmd.push({
+          value: '',
+          index: this.createContainerForm.cmdIndex,
+          status: 1
+        });
+      },
+      // 删除 cmd
+      handleRemoveCmd(index) {
+        if (this.createContainerForm.cmd.length === 1) {
+          return;
+        }
+        this.createContainerForm.cmd[index].status = 0;
+      },
+
       // 创建容器
       createContainer() {
         let f = {};
         f.image_name = this.createContainerForm.image_name;
         f.container_name = this.createContainerForm.container_name;
-        f.cmd = this.createContainerForm.cmd.split(' ');
+        // f.cmd = this.createContainerForm.cmd.split(' ');
         f.working_dir = this.createContainerForm.working_dir;
         f.container_port_proto = this.createContainerForm.container_port_proto;
         f.container_port = this.createContainerForm.container_port;
@@ -389,10 +425,18 @@
         }
         f.volumes = [];
         for (let i = 0; i < this.createContainerForm.volumes.length; ++i) {
-          f.volumes.push({
-            host_volume: this.createContainerForm.volumes[i].host_volume,
-            container_volume: this.createContainerForm.volumes[i].container_volume
-          })
+          if (this.createContainerForm.volumes[i].status !== 0) {
+            f.volumes.push({
+              host_volume: this.createContainerForm.volumes[i].host_volume,
+              container_volume: this.createContainerForm.volumes[i].container_volume
+            })
+          }
+        }
+        f.cmd = [];
+        for (let i = 0; i < this.createContainerForm.cmd.length; ++i) {
+          if (this.createContainerForm.cmd[i].status !== 0) {
+            f.cmd.push(this.createContainerForm.cmd[i].value)
+          }
         }
 
         createContainer({
