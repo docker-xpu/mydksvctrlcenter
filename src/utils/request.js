@@ -62,7 +62,7 @@ service.interceptors.response.use(
       Notice.error({
         title: '网络错误',
         desc: '臣妾做不到呀',
-        duration: 0
+        duration: 3
       });
 
       LoadingBar.error();

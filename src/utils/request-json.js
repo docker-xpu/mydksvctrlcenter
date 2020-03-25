@@ -15,11 +15,13 @@ const service = axios.create({
 service.interceptors.request.use(
     config => {
       LoadingBar.start();
-      store.state.loading.push(Message.loading({
-        duration: 0,
-        content: '数据载入中...',
-        closable: true
-      }));
+      if (store.state.loading.length === 0) {  // 同一时间只能有一个 loading message
+        store.state.loading.push(Message.loading({
+          duration: 0,
+          content: '数据载入中...',
+          closable: true
+        }));
+      }
 
       return config;
     },
