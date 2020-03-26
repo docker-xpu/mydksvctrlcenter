@@ -3,13 +3,13 @@
     <Card title="创建集群" :bordered="false">
       <Form :label-width="100">
         <FormItem label="集群名：">
-          <Input placeholder="例如：xxx服务"></Input>
+          <Input placeholder="例如：xxx服务" v-model="createPodForm.pod_name"></Input>
         </FormItem>
         <FormItem label="镜像：">
-          <Input placeholder="例如：mynginx"></Input>
+          <Input placeholder="例如：mynginx" v-model="createPodForm.image_name"></Input>
         </FormItem>
         <FormItem label="容器数量：">
-          <InputNumber :min="1" placeholder="例如：4"></InputNumber>
+          <InputNumber :min="1" placeholder="例如：4" v-model="createPodForm.container_num"></InputNumber>
         </FormItem>
         <FormItem
                 v-for="(item, index) in createPodForm.volumes"
@@ -33,8 +33,19 @@
             </Col>
           </Row>
         </FormItem>
-        <FormItem label="运行命令：">
-          <Input type="textarea" placeholder="例如：tar -zxvf && cd /root/"></Input>
+        <FormItem label="Command：">
+          <Row v-for="(item, index) in createPodForm.run_command"
+               :key="index + 'cmd'" v-if="item.status">
+            <Col span="20">
+              <label>启动时运行的命令{{index}}
+                <Input type="text" v-model="item.value"></Input>
+              </label>
+            </Col>
+            <Col span="4">
+              <Button icon="md-add" type="primary" ghost @click="handleAddCmd">增加</Button>
+              <Button type="error" ghost icon="md-arrow-round-back" @click="handleRemoveCmd(index)">删除</Button>
+            </Col>
+          </Row>
         </FormItem>
         <FormItem label="网络：">
           <Row>
@@ -45,19 +56,19 @@
               </label>
             </Col>
             <Col span="8">
-              <label>主机端口
+              <label>对外服务端口
                 <Input type="text" v-model="createPodForm.host_port" placeholder="例如：8081"></Input>
               </label>
             </Col>
             <Col span="8">
-              <label>容器端口
+              <label>容器内端口
                 <Input type="text" v-model="createPodForm.container_port" placeholder="例如：80"></Input>
               </label>
             </Col>
           </Row>
         </FormItem>
         <FormItem>
-          <Button type="primary" long size="large">创建</Button>
+          <Button type="primary" long size="large" @click="handleCreatePod">创建</Button>
         </FormItem>
       </Form>
     </Card>
@@ -65,6 +76,8 @@
 </template>
 
 <script>
+  import {createPod} from '../../api/cluster';
+
   export default {
     name: "Create",
     data() {
@@ -81,7 +94,14 @@
               status: 1
             },
           ],
-          "run_command": '',
+          "run_command": [
+            {
+              value: '',
+              index: 1,
+              status: 1,
+            },
+          ],
+          cmdIndex: 1,
           "container_port": '',
           "host_port": '',
           "container_port_proto": ''
@@ -103,6 +123,53 @@
       // 删除 volume
       handleRemoveVolume(index) {
         this.createPodForm.volumes[index].status = 0;
+      },
+      // 增加 cmd
+      handleAddCmd() {
+        this.createPodForm.cmdIndex++;
+        this.createPodForm.run_command.push({
+          value: '',
+          index: this.createPodForm.cmdIndex,
+          status: 1
+        });
+      },
+      // 删除 cmd
+      handleRemoveCmd(index) {
+        if (this.createPodForm.run_command.length === 1) {
+          return;
+        }
+        this.createPodForm.run_command[index].status = 0;
+      },
+
+      // 创建集群
+      handleCreatePod() {
+        let f = {
+          pod_name: this.createPodForm.pod_name,
+          image_name: this.createPodForm.image_name,
+          container_num: this.createPodForm.container_num,
+          container_port: this.createPodForm.container_port,
+          host_port: this.createPodForm.host_port,
+          container_port_proto: this.createPodForm.container_port_proto,
+          volumes: [],
+          run_command: [],
+        };
+        for (let i = 0; i < this.createPodForm.volumes.length; ++i) {
+          f.volumes.push({
+            host_volume: this.createPodForm.volumes[i].host_volume,
+            container_volume: this.createPodForm.volumes[i].container_volume,
+          })
+        }
+        for (let i = 0; i < this.createPodForm.run_command.length; i++) {
+          f.run_command.push(this.createPodForm.run_command[i].value)
+        }
+
+        createPod(f).then(res => {
+          if (res.code === 0) {
+            this.$Message.success(res.msg);
+          } else {
+            this.$Message.error(res.msg);
+          }
+        })
       },
     },
     mounted() {

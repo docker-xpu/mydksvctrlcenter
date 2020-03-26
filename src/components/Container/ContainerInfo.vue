@@ -20,6 +20,14 @@
         <Tag color="purple">内存{{(containerInfo.memTotal/1024/1024/1024).toFixed(1)}}GB</Tag>
       </div>
       <Divider></Divider>
+
+      <div style="text-align: center">
+        <ButtonGroup>
+          <Button type="primary" icon="md-refresh" @click="refreshHostInfo">刷新容器信息</Button>
+          <Button type="primary" icon="md-refresh" @click="refreshHostInfo">刷新镜像信息</Button>
+        </ButtonGroup>
+      </div>
+
       <Table stripe :columns="containerInfoColumns" :data="containerInfo.containers">
         <template slot-scope="{ row }" slot="id">
           <span>{{ row.container.names[0] }}</span>
@@ -99,12 +107,36 @@
               </Row>
             </FormItem>
             <FormItem label="镜像名：">
-              <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>
+<!--              <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>-->
+
+              <Row>
+                <Col span="12">
+                  <label>镜像名
+                    <Select v-model="createContainerForm.image_name" @on-change="onImageSelectChange">
+                      <Option v-for="item in $store.state.images"
+                              :value="item.name"
+                              :key="item.name">
+                        {{ item.name }}
+                      </Option>
+                    </Select>
+                  </label>
+                </Col>
+                <Col span="12">
+                  <label>TAG
+                    <Select v-model="createContainerForm.image_tag">
+                      <Option v-for="item in createContainerForm.selected_image_tags"
+                              :value="item.tagName"
+                              :key="item.tagName">
+                        {{item.tagName}}
+                      </Option>
+                    </Select>
+                  </label>
+                </Col>
+              </Row>
             </FormItem>
-            <FormItem
-                    v-for="(item, index) in createContainerForm.volumes"
-                    :key="index"
-                    v-if="item.status" :label="'容器卷 ' + index + '：'">
+            <FormItem v-for="(item, index) in createContainerForm.volumes"
+                      :key="index"
+                      v-if="item.status" :label="'容器卷 ' + index + '：'">
               <Row>
                 <Col span="10">
                   <label>宿主机路径
@@ -239,6 +271,8 @@
         createContainerForm: {
           ip: '',
           image_name: '',
+          selected_image_tags: [],
+          image_tag: '',
           container_name: '',
           cmd: [
             {
@@ -269,6 +303,12 @@
       }
     },
     methods: {
+      refreshHostInfo() {
+        this.$store.dispatch('getAllHost');
+      },
+      refreshImageInfo() {
+        this.$store.dispatch('getAllImages');
+      },
       // 点击启动容器
       startContainer(row) {
         startContainer({
@@ -410,7 +450,7 @@
       // 创建容器
       createContainer() {
         let f = {};
-        f.image_name = this.createContainerForm.image_name;
+        f.image_name = this.createContainerForm.image_name + ':' + this.createContainerForm.image_tag;
         f.container_name = this.createContainerForm.container_name;
         // f.cmd = this.createContainerForm.cmd.split(' ');
         f.working_dir = this.createContainerForm.working_dir;
@@ -453,8 +493,18 @@
           this.$store.dispatch('getAllHost');
         })
       },
+
+      // 选择镜像
+      onImageSelectChange(image_name) {
+        for (let i = 0; i < this.$store.state.images.length; i++) {
+          if (this.$store.state.images[i].name === image_name) {
+            this.createContainerForm.selected_image_tags = this.$store.state.images[i].tags;
+          }
+        }
+      }
     },
     mounted() {
+      this.refreshImageInfo();
     },
   }
 </script>
