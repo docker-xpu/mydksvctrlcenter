@@ -275,7 +275,7 @@
         for (let i = 0; i < this.$store.state.hosts.length; ++i) {
           let echarts = require('echarts');
           let myChart = echarts.init(document.getElementById(`${i}`), 'light');
-          l.push(myChart)
+          l.push(myChart);
         }
         return l
       },
@@ -311,7 +311,6 @@
       },
       // 收到 websocket 数据
       onmessage(e) {
-        // console.log(e)
         let res = JSON.parse(e.data);
         for (let i = 0; i < res.length; i++) {
           for (let j = 0; j < this.$store.state.hosts.length; ++j) {
@@ -327,8 +326,7 @@
             }
           }
         }
-        // console.log(this.$store.state.hosts);
-        // console.log(res);
+
         for (let i = 0; i < res.length; ++i) {
           this.myCharts[i].setOption({
             title: {
