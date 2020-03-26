@@ -204,6 +204,11 @@
         createPod(f).then(res => {
           if (res.code === 0) {
             this.$Message.success(res.msg);
+            let d = res.data;
+            this.$Modal.info({
+              title: `集群名：${d.podName}`,
+              content: `name：${d.nginxName}<br>节点个数：${d.nodeNumber}<br>对外服务：${d.gateWayIp}:${d.nodePort}`
+            });
           } else {
             this.$Message.error(res.msg);
           }
