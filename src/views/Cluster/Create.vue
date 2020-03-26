@@ -6,7 +6,32 @@
           <Input placeholder="例如：xxx服务" v-model="createPodForm.pod_name"></Input>
         </FormItem>
         <FormItem label="镜像：">
-          <Input placeholder="例如：mynginx" v-model="createPodForm.image_name"></Input>
+<!--          <Input placeholder="例如：mynginx" v-model="createPodForm.image_name"></Input>-->
+
+          <Row>
+            <Col span="12">
+              <label>镜像名
+                <Select v-model="createPodForm.image_name" @on-change="onImageSelectChange">
+                  <Option v-for="item in $store.state.images"
+                          :value="item.name"
+                          :key="item.name">
+                    {{ item.name }}
+                  </Option>
+                </Select>
+              </label>
+            </Col>
+            <Col span="12">
+              <label>TAG
+                <Select v-model="createPodForm.image_tag">
+                  <Option v-for="item in createPodForm.selected_image_tags"
+                          :value="item.tagName"
+                          :key="item.tagName">
+                    {{item.tagName}}
+                  </Option>
+                </Select>
+              </label>
+            </Col>
+          </Row>
         </FormItem>
         <FormItem label="容器数量：">
           <InputNumber :min="1" placeholder="例如：4" v-model="createPodForm.container_num"></InputNumber>
@@ -85,6 +110,8 @@
         createPodForm: {
           "pod_name": '',
           "image_name": '',
+          "image_tag": '',
+          "selected_image_tags": '',
           "container_num": 1,
           "volumes": [
             {
@@ -109,6 +136,9 @@
       }
     },
     methods: {
+      refreshImageInfo() {
+        this.$store.dispatch('getAllImages');
+      },
       // 创建容器当添加 volume
       handleAddVolume() {
         this.createPodForm.volumesIndex++;
@@ -140,12 +170,20 @@
         }
         this.createPodForm.run_command[index].status = 0;
       },
+      // 选择镜像
+      onImageSelectChange(image_name) {
+        for (let i = 0; i < this.$store.state.images.length; i++) {
+          if (this.$store.state.images[i].name === image_name) {
+            this.createPodForm.selected_image_tags = this.$store.state.images[i].tags;
+          }
+        }
+      },
 
       // 创建集群
       handleCreatePod() {
         let f = {
           pod_name: this.createPodForm.pod_name,
-          image_name: this.createPodForm.image_name,
+          image_name: this.createPodForm.image_name + ':' + this.createPodForm.image_tag,
           container_num: this.createPodForm.container_num,
           container_port: this.createPodForm.container_port,
           host_port: this.createPodForm.host_port,
@@ -173,6 +211,7 @@
       },
     },
     mounted() {
+      this.refreshImageInfo();
     },
   }
 </script>
