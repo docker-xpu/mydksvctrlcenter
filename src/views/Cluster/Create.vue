@@ -1,13 +1,12 @@
 <template>
   <div>
-    <Card title="创建集群" :bordered="false">
+    <Button @click="showCreate = true" type="primary" long size="large">创建集群</Button>
+    <Modal width="50" v-model="showCreate" title="创建集群" :bordered="false">
       <Form :label-width="100">
         <FormItem label="集群名：">
           <Input placeholder="例如：xxx服务" v-model="createPodForm.pod_name"></Input>
         </FormItem>
         <FormItem label="镜像：">
-<!--          <Input placeholder="例如：mynginx" v-model="createPodForm.image_name"></Input>-->
-
           <Row>
             <Col span="12">
               <label>镜像名
@@ -92,11 +91,11 @@
             </Col>
           </Row>
         </FormItem>
-        <FormItem>
-          <Button type="primary" long size="large" @click="handleCreatePod">创建</Button>
-        </FormItem>
       </Form>
-    </Card>
+      <div slot="footer">
+        <Button type="primary" long size="large" @click="handleCreatePod">创建</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -133,6 +132,7 @@
           "host_port": '',
           "container_port_proto": ''
         },
+        showCreate: false,
       }
     },
     methods: {
