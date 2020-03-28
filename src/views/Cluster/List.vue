@@ -46,16 +46,18 @@
             <Col span="8" v-for="(container, index) in host.containers" :key="index">
               <Card>
                 {{container}}
-                <Button size="small" type="primary" @click="handleShowContainerLoadInfo(container, index, host)">负载信息
+                <Button size="small" type="primary"
+                        @click="handleShowContainerLoadInfo(container, index, host)">负载信息
                 </Button>
-                <Modal v-model="showContainerLoadModal">
-                  <div :id="'container' + index" style="width: 500px; height: 300px"></div>
-                </Modal>
               </Card>
             </Col>
           </Row>
         </TabPane>
       </Tabs>
+
+      <Modal v-model="showContainerLoadModal">
+        <div id="container" style="width: 500px; height: 300px"></div>
+      </Modal>
 
       <div id="pod_avg_load" style="width: 800px; height: 300px"></div>
       <div id="pod_tree" style="width: 800px; height: 100%"></div>
@@ -70,6 +72,8 @@
     removePod,
     startPod, stopPod
   } from '../../api/cluster';
+
+  let echarts = require('echarts');
 
   export default {
     name: "List",
@@ -87,7 +91,6 @@
       handleShowDetail(item) {
         this.showDetail = true;
         this.pod_detail = item;
-        let echarts = require('echarts');
         let pod_avg_load_chart = echarts.init(document.getElementById('pod_avg_load'), 'light');
         pod_avg_load_chart.setOption({
           title: {
@@ -158,8 +161,7 @@
       // 查看单个容器的负载信息
       handleShowContainerLoadInfo(container, index, host) {
         this.showContainerLoadModal = true;
-        let echarts = require('echarts');
-        let container_load_chart = echarts.init(document.getElementById('container' + index), 'light');
+        let container_load_chart = echarts.init(document.getElementById('container'), 'light');
         container_load_chart.showLoading();
         getContainerLoadInfo({
           ip: host.ip,

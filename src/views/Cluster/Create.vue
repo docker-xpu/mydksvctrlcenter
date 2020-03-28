@@ -100,7 +100,7 @@
 </template>
 
 <script>
-  import {createPod} from '../../api/cluster';
+  import {createPod, listPod} from '../../api/cluster';
 
   export default {
     name: "Create",
