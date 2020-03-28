@@ -10,6 +10,33 @@ export function createPod(data) {
   })
 }
 
+// 移除集群
+export function removePod(data) {
+  return request({
+    url: 'cluster/remove',
+    method: 'post',
+    data
+  })
+}
+
+// 启动集群
+export function startPod(data) {
+  return request({
+    url: 'cluster/start',
+    method: 'post',
+    data
+  })
+}
+
+// 停止集群
+export function stopPod(data) {
+  return request({
+    url: 'cluster/stop',
+    method: 'post',
+    data
+  })
+}
+
 // 获取集群列表
 export function listPod(query) {
   return request({

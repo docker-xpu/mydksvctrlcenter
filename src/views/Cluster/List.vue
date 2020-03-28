@@ -10,12 +10,28 @@
               <Badge status="processing"></Badge>
               {{item.podName}}
             </p>
+
+            <div slot="extra">
+              <Tag :color="item.status === 0 ? 'success': 'default'">{{item.statusStr}}</Tag>
+            </div>
+
             <div>
               创建时间：{{new Date(item.createTime).toLocaleDateString()}}<br>
               节点数：{{item.nodeNumber}}<br>
               对外服务：{{item.gateWayIp}}:{{item.nodePort}}<br>
               服务名：{{item.nginxName}}<br>
-              <Button @click="handleShowDetail(item)" type="primary" long>详细信息</Button>
+              <Row>
+                <Col span="8">
+                  <Button @click="handleRemovePod(item)" size="small" long type="error" ghost>移除集群</Button>
+                </Col>
+                <Col span="8">
+                  <Button @click="handleStartPod(item)" size="small" long type="success">启动集群</Button>
+                </Col>
+                <Col span="8">
+                  <Button @click="handleStopPod(item)" size="small" long type="warning">停止集群</Button>
+                </Col>
+              </Row>
+              <Button @click="handleShowDetail(item)" size="large" type="primary" long>详细信息</Button>
             </div>
           </Card>
         </Col>
@@ -23,7 +39,6 @@
     </Card>
 
     <Drawer :title="pod_detail.podName + '详情'" width="60" :closable="false" v-model="showDetail">
-      {{pod_detail.hostTree}}
       <Tabs value="0" style="padding-bottom: 20px">
         <TabPane v-for="(host, index) in pod_detail.hosts"
                  :label="host.ip" :name="`${index}`" :key="index">
@@ -31,8 +46,11 @@
             <Col span="8" v-for="(container, index) in host.containers" :key="index">
               <Card>
                 {{container}}
-                <Button size="small" type="primary" @click="handleShowContainerLoadInfo(container, index, host)">负载信息</Button>
-                <div :id="'container' + index"></div>
+                <Button size="small" type="primary" @click="handleShowContainerLoadInfo(container, index, host)">负载信息
+                </Button>
+                <Modal v-model="showContainerLoadModal">
+                  <div :id="'container' + index" style="width: 500px; height: 300px"></div>
+                </Modal>
               </Card>
             </Col>
           </Row>
@@ -46,7 +64,12 @@
 </template>
 
 <script>
-  import {listPod, getContainerLoadInfo} from '../../api/cluster';
+  import {
+    listPod,
+    getContainerLoadInfo,
+    removePod,
+    startPod, stopPod
+  } from '../../api/cluster';
 
   export default {
     name: "List",
@@ -56,6 +79,7 @@
         showDetail: false,
         pod_detail: {},
         loading: true,
+        showContainerLoadModal: false,
       }
     },
     methods: {
@@ -63,7 +87,6 @@
       handleShowDetail(item) {
         this.showDetail = true;
         this.pod_detail = item;
-        console.log(item);
         let echarts = require('echarts');
         let pod_avg_load_chart = echarts.init(document.getElementById('pod_avg_load'), 'light');
         pod_avg_load_chart.setOption({
@@ -132,24 +155,101 @@
         });
       },
 
+      // 查看单个容器的负载信息
       handleShowContainerLoadInfo(container, index, host) {
-        console.log(container, index, host);
+        this.showContainerLoadModal = true;
         let echarts = require('echarts');
         let container_load_chart = echarts.init(document.getElementById('container' + index), 'light');
-        console.log(container_load_chart);
+        container_load_chart.showLoading();
         getContainerLoadInfo({
           ip: host.ip,
           containerId: container
-        }).then(res=>{
-          console.log(res);
+        }).then(res => {
+          container_load_chart.hideLoading();
+          container_load_chart.setOption({
+            title: {
+              text: '容器负载'
+            },
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                animation: true
+              }
+            },
+            xAxis: {
+              type: 'category',
+              data: res.data.mem.xaxis
+            },
+            yAxis: {
+              type: 'value'
+            },
+            series: [{
+              name: 'mem',
+              data: res.data.mem.data,
+              type: 'line',
+              smooth: true
+            }, {
+              name: 'cpu',
+              data: res.data.cpu.data,
+              type: 'line',
+              smooth: true
+            },]
+          });
+        });
+      },
+
+      // 移除集群
+      handleRemovePod(item) {
+        this.$Modal.confirm({
+          title: `<p style="color: red">此操作会移除集群的所有节点!</p>`,
+          content: `是否移除集群服务：${item.podName}`,
+          onOk: () => {
+            removePod({cluster: item.id}).then(res => {
+              if (res.code === 0) {
+                this.$Message.success(res.msg);
+                this.listPodInfo();
+              } else {
+                this.$Message.error(res.msg);
+              }
+            });
+          }
+        });
+      },
+
+      // 启动集群
+      handleStartPod(item) {
+        startPod({cluster: item.id}).then(res => {
+          if (res.code === 0) {
+            this.$Message.success(res.msg);
+            this.listPodInfo();
+          } else {
+            this.$Message.error(res.msg);
+          }
+        });
+      },
+
+      // 停止集群
+      handleStopPod(item) {
+        stopPod({cluster: item.id}).then(res => {
+          if (res.code === 0) {
+            this.$Message.success(res.msg);
+            this.listPodInfo();
+          } else {
+            this.$Message.error(res.msg);
+          }
+        });
+      },
+
+      // 获取集群信息
+      listPodInfo() {
+        listPod().then(res => {
+          this.pods = res.data;
+          this.loading = false;
         });
       },
     },
     mounted() {
-      listPod().then(res => {
-        this.pods = res.data;
-        this.loading = false;
-      });
+      this.listPodInfo();
     },
   }
 </script>
