@@ -4,7 +4,7 @@
       <Spin size="large" fix v-if="loading"></Spin>
 
       <Row :gutter="16">
-        <Col span="8" v-for="(item, index) in pods" :key="index">
+        <Col span="8" v-for="(item, index) in $store.state.pods" :key="index">
           <Card>
             <p slot="title">
               <Badge status="processing"></Badge>
@@ -79,10 +79,10 @@
     name: "List",
     data() {
       return {
-        pods: {},
+        // pods: {},
         showDetail: false,
         pod_detail: {},
-        loading: true,
+        loading: false,
         showContainerLoadModal: false,
       }
     },
@@ -251,7 +251,7 @@
       },
     },
     mounted() {
-      this.listPodInfo();
+      this.$store.dispatch('listPodInfo');
     },
   }
 </script>

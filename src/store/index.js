@@ -7,13 +7,19 @@ import {
   deleteLicence,
   newLicence,
 } from '../api/host';
+
 import {
   listImages,
 } from '../api/images';
+
 import {
   listFiles,
   removeFile,
 } from '../api/utils';
+
+import {
+  listPod,
+} from '../api/cluster';
 
 import {Message} from 'view-design';
 
@@ -28,6 +34,8 @@ export default new Vuex.Store({
     images: [],  // 镜像列表
 
     files: [],  // 文件列表
+
+    pods: [],  // 集群信息列表
   },
   mutations: {},
   actions: {
@@ -102,6 +110,17 @@ export default new Vuex.Store({
           Message.success(res.msg);
         }
       })
+    },
+
+    // 获取集群列表
+    listPodInfo(context) {
+      listPod().then(res => {
+        if (res.code === 0) {
+          context.state.pods = res.data;
+        } else {
+          Message.error(res.msg);
+        }
+      });
     },
   },
   modules: {}

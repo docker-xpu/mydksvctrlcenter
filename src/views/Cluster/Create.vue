@@ -203,6 +203,7 @@
 
         createPod(f).then(res => {
           if (res.code === 0) {
+            this.$store.dispatch('listPodInfo');
             this.$Message.success(res.msg);
             let d = res.data;
             this.$Modal.info({
