@@ -38,7 +38,7 @@
       </Row>
     </Card>
 
-    <Drawer :title="pod_detail.podName + '详情'" width="60" :closable="false" v-model="showDetail">
+    <Drawer :title="pod_detail.podName + '详情'" width="60" v-model="showDetail">
       <Tabs value="0" style="padding-bottom: 20px">
         <TabPane v-for="(host, index) in pod_detail.hosts"
                  :label="host.ip" :name="`${index}`" :key="index">
