@@ -247,7 +247,6 @@
       },
 
       handleAdjustPod(item) {
-        console.log(item);
         let newSize = 0;
         this.$Modal.confirm({
           title: '扩容后节点数',
