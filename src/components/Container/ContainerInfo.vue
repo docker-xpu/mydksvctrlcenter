@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Button size="large" long type="primary" @click="showContainerInfo = true">容器信息</Button>
+    <Button size="large" long type="primary" @click="handleClickContainerInfoBtn">容器信息</Button>
 
-    <Drawer width="90" draggable :closable="true" v-model="showContainerInfo">
+    <Drawer width="90" draggable :closable="true" @on-close="handleDrawerClose" v-model="showContainerInfo">
       <!--      标题-->
       <div>
         <h2>
@@ -501,7 +501,13 @@
             this.createContainerForm.selected_image_tags = this.$store.state.images[i].tags;
           }
         }
-      }
+      },
+
+      handleClickContainerInfoBtn() {
+        this.showContainerInfo = true;
+      },
+      handleDrawerClose() {
+      },
     },
     mounted() {
       this.refreshImageInfo();

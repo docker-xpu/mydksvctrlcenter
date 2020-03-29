@@ -113,6 +113,7 @@
                     </Col>
                     <Col span="8">
                       <ContainerInfo :container-info="$store.state.hosts[index]"></ContainerInfo>
+<!--                      <ContainerInfo :container-info="hostInfo($store.state.hosts[index])"></ContainerInfo>-->
                     </Col>
                     <Col span="8">
                       <HostFiles :host-ip="item.hostIp"></HostFiles>
@@ -287,6 +288,9 @@
       store.dispatch("getAllHost");
     },
     methods: {
+      // hostInfo: function (hostInfo) {
+      //   return hostInfo
+      // },
       // 查看监控按钮点击
       onClickWatchBtn() {
         this.showWatch = true;
