@@ -34,7 +34,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     res => {
       // Message.destroy();
-      if (store.state.loading.length === 1) {
+      if (store.state.loading.length === 0) {
         LoadingBar.finish();
       }
       setTimeout(store.state.loading.pop(), 0);

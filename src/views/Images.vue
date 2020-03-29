@@ -3,6 +3,7 @@
     <Row :gutter="16">
       <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 6, offset: 0 }">
         <Card title="已有镜像" icon="ios-appstore" :padding="0" shadow>
+          <Spin size="large" fix v-if="$store.state.showSpin"></Spin>
           <CellGroup @on-click="onCellSelected">
             <Cell v-for="(item, index) in $store.state.images" :key="index" :title="item.name" :name="index"
                   :selected="selectedImage === index">
@@ -13,6 +14,7 @@
       </Col>
       <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 18, offset: 0 }">
         <Card shadow>
+          <Spin size="large" fix v-if="$store.state.showSpin"></Spin>
           <div slot="title">
             {{$store.state.images[selectedImage].name}}
             <Divider type="vertical"></Divider>

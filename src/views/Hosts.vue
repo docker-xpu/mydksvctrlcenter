@@ -5,6 +5,7 @@
            :lg="{ span: 18, offset: 0 }"
            style="padding-right: 20px">
         <Card title="主机管理" icon="logo-windows" shadow style="margin-bottom: 20px">
+          <Spin size="large" fix v-if="$store.state.showSpin"></Spin>
           <Row :gutter="16">
             <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 6, offset: 0 }">
               <Form>
@@ -82,6 +83,7 @@
                :key="index">
             <div style="padding-bottom: 20px">
               <Card>
+                <Spin size="large" fix v-if="$store.state.showSpin"></Spin>
                 <div slot="extra">
                   <Tag :color="item.hostStatus === 0 ? 'success': 'default'">{{item.hostStatusStr}}</Tag>
                 </div>

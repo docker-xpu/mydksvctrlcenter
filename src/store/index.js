@@ -28,6 +28,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     loading: [],
+    showSpin: true,
 
     licences: [], // 主机凭据
     hosts: [], // 主机列表

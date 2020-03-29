@@ -1,6 +1,7 @@
 <template>
   <div>
     <Card title="CloudFiles" :padding="0" style="width: 300px;">
+      <Spin size="large" fix v-if="$store.state.showSpin"></Spin>
       <CellGroup>
         <Cell v-for="(item, index) in $store.state.files" :title="item.name">
           <div slot="extra">

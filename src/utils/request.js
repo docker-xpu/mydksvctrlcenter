@@ -37,6 +37,7 @@ service.interceptors.request.use(
           closable: true
         }));
       }
+      store.state.showSpin = true;
 
       return config;
     },
@@ -50,6 +51,7 @@ service.interceptors.response.use(
     res => {
       // Message.destroy();
       if (store.state.loading.length === 1) {
+        store.state.showSpin = false;
         LoadingBar.finish();
       }
       setTimeout(store.state.loading.pop(), 0);
@@ -58,6 +60,7 @@ service.interceptors.response.use(
     },
     err => {
       // Message.destroy();
+      store.state.showSpin = false;
 
       Notice.error({
         title: '网络错误',

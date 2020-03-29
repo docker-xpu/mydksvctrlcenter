@@ -1,7 +1,7 @@
 <template>
   <div>
     <Card title="集群LIST" :bordered="false">
-      <Spin size="large" fix v-if="loading"></Spin>
+      <Spin size="large" fix v-if="$store.state.showSpin"></Spin>
 
       <Row :gutter="16">
         <Col span="8" v-for="(item, index) in $store.state.pods" :key="index">
