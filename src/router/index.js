@@ -8,17 +8,23 @@ import Hosts from '../views/Hosts';
 import Images from '../views/Images';
 import Editor from '../views/Editor';
 import Cluster from '../views/Cluster';
+import Login from '../views/Login';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
+    name: 'Login',
+    component: Login,
+  },
+  {
+    path: '/Home',
     // name: 'Home',
     component: Home,
     children: [
       {
-        path: '/',
+        path: '/Home',
         name: 'Index',
         component: Index,
       },

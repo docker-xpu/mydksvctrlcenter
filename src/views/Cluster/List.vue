@@ -3,6 +3,10 @@
     <Card title="集群LIST" :bordered="false">
       <Spin size="large" fix v-if="$store.state.showSpin"></Spin>
 
+      <div v-show="$store.state.pods.length === 0" style="text-align: center">
+        暂无数据
+      </div>
+
       <Row :gutter="16">
         <Col span="8" v-for="(item, index) in $store.state.pods" :key="index">
           <Card>
@@ -266,7 +270,7 @@
             })
           },
           onOk: () => {
-            adjustPod({newSize: newSize, clusterId: item.id,}).then(res=>{
+            adjustPod({newSize: newSize, clusterId: item.id,}).then(res => {
               if (res.code === 0) {
                 this.$Message.success(res.msg);
                 this.$store.dispatch('listPodInfo');

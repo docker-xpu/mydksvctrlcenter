@@ -1,5 +1,22 @@
 import request from '../utils/request';
 
+// 用户登录
+export function userLogin(data) {
+  return request({
+    url: 'user/login',
+    method: 'post',
+    data
+  })
+}
+
+// 退出登录
+export function userLogout() {
+  return request({
+    url: 'user/logout',
+    method: 'get'
+  })
+}
+
 // 获取文件列表
 export function listFiles() {
   return request({

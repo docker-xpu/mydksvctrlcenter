@@ -21,9 +21,6 @@ const service = axios.create({
       return params
     }
   ],
-  // xsrfCookieName: 'csrftoken',
-  // xsrfHeaderName: 'X-CSRFToken',
-  // timeout: 5000,  // request timeout
 });
 
 // request 拦截器

@@ -19,7 +19,8 @@ export function listHost() {
 // 移除一台主机
 export function removeHost(data) {
   return request({
-    url: 'host/remove',
+    // url: 'host/remove',
+    url: 'permission-host/remove',
     method: 'post',
     data
   })

@@ -36,6 +36,8 @@
             <span>关于</span>
           </MenuItem>
         </Menu>
+
+        <Button type="primary" long @click="handleLogout">退出登录</Button>
       </Sider>
       <Layout>
         <Header :style="{padding: 0}" class="layout-header-bar">
@@ -53,7 +55,7 @@
 <script>
   // @ is an alias to /src
   // import HelloWorld from '@/components/HelloWorld.vue'
-  import {newLicence} from '@/api/host'
+  import {userLogout} from '../api/utils';
 
   export default {
     name: 'Home',
@@ -82,6 +84,18 @@
     methods: {
       collapsedSider() {
         this.$refs.side1.toggleCollapse();
+      },
+
+      handleLogout() {
+        userLogout().then(res=>{
+          if (res.code === 0) {
+            this.$Message.success(res.msg);
+            localStorage.removeItem('is_login');
+            this.$router.push('/');
+          } else {
+            this.$Message.error(res.msg);
+          }
+        });
       },
 
       // 鼠标移动到火箭上时
