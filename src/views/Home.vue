@@ -87,14 +87,19 @@
       },
 
       handleLogout() {
-        userLogout().then(res=>{
-          if (res.code === 0) {
-            this.$Message.success(res.msg);
-            localStorage.removeItem('is_login');
-            this.$router.push('/');
-          } else {
-            this.$Message.error(res.msg);
-          }
+        this.$Modal.confirm({
+          title: '确定退出？',
+          onOk: () => {
+            userLogout().then(res=>{
+              if (res.code === 0) {
+                this.$Message.success(res.msg);
+                localStorage.removeItem('is_login');
+                this.$router.push('/');
+              } else {
+                this.$Message.error(res.msg);
+              }
+            });
+          },
         });
       },
 
