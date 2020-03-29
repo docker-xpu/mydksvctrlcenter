@@ -37,7 +37,7 @@
           </MenuItem>
         </Menu>
 
-        <Button type="primary" long @click="handleLogout">退出登录</Button>
+        <Button type="text" style="color: orangered" long @click="handleLogout">退出登录</Button>
       </Sider>
       <Layout>
         <Header :style="{padding: 0}" class="layout-header-bar">

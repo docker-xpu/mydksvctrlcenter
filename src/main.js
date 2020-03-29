@@ -36,7 +36,14 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title + ' - 筋斗云'
   }
-  next();
+  let validator = typeof to.meta.auth == "undefined" || !to.meta.auth || localStorage.getItem('is_login');
+  let result = validator ? {} : {
+    name: "login",　　// 跳转到命名路由
+    query: {
+      url: to.fullPath   // 做一个来源页面，用于登陆成功之后跳转
+    }
+  };
+  next(result);
 });
 
 router.afterEach(route => {

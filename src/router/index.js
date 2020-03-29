@@ -15,25 +15,30 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
-    name: 'Login',
+    name: 'login',
     component: Login,
   },
   {
-    path: '/Home',
+    path: '/home',
     // name: 'Home',
     component: Home,
     children: [
       {
-        path: '/Home',
+        path: '/home',
         name: 'Index',
         component: Index,
+        meta:{
+          title: 'Home',
+          auth: true,
+        }
       },
       {
         path: '/about',
         name: 'About',
         component: About,
         meta:{
-          title: '关于'
+          title: '关于',
+          auth: true,
         }
       },
       {
@@ -41,6 +46,7 @@ const routes = [
         name: 'Hosts',
         component: Hosts,
         meta:{
+          auth: true,
           title: '主机'
         }
       },
@@ -49,6 +55,7 @@ const routes = [
         name: 'Images',
         component: Images,
         meta:{
+          auth: true,
           title: '镜像'
         }
       },
@@ -57,6 +64,7 @@ const routes = [
         name: 'Editor',
         component: Editor,
         meta:{
+          auth: true,
           title: 'iCode'
         }
       },
@@ -65,6 +73,7 @@ const routes = [
         name: 'Cluster',
         component: Cluster,
         meta:{
+          auth: true,
           title: '集群'
         }
       },

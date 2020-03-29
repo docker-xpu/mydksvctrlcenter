@@ -65,7 +65,7 @@
             if (res.code ===0 ) {
               this.$Message.success(res.msg);
               localStorage.setItem('is_login', true);
-              this.$router.push('/Home');
+              this.$router.push('/home');
             } else {
               this.$Message.error(res.msg);
             }
