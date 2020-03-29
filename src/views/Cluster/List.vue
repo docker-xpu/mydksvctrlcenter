@@ -21,14 +21,17 @@
               对外服务：{{item.gateWayIp}}:{{item.nodePort}}<br>
               服务名：{{item.nginxName}}<br>
               <Row>
-                <Col span="8">
-                  <Button @click="handleRemovePod(item)" size="small" long type="error" ghost>移除集群</Button>
+                <Col span="6">
+                  <Button @click="handleStartPod(item)" size="small" long type="success">启动</Button>
                 </Col>
-                <Col span="8">
-                  <Button @click="handleStartPod(item)" size="small" long type="success">启动集群</Button>
+                <Col span="6">
+                  <Button @click="handleStopPod(item)" size="small" long type="error">停止</Button>
                 </Col>
-                <Col span="8">
-                  <Button @click="handleStopPod(item)" size="small" long type="warning">停止集群</Button>
+                <Col span="6">
+                  <Button @click="handleAdjustPod(item)" size="small" long type="warning">扩容</Button>
+                </Col>
+                <Col span="6">
+                  <Button @click="handleRemovePod(item)" size="small" long type="error" ghost>移除</Button>
                 </Col>
               </Row>
               <Button @click="handleShowDetail(item)" size="large" type="primary" long>详细信息</Button>
@@ -70,7 +73,8 @@
     listPod,
     getContainerLoadInfo,
     removePod,
-    startPod, stopPod
+    startPod, stopPod,
+    adjustPod
   } from '../../api/cluster';
 
   let echarts = require('echarts');
@@ -239,6 +243,39 @@
           } else {
             this.$Message.error(res.msg);
           }
+        });
+      },
+
+      handleAdjustPod(item) {
+        console.log(item);
+        let newSize = 0;
+        this.$Modal.confirm({
+          title: '扩容后节点数',
+          render: (h) => {
+            return h('InputNumber', {
+              props: {
+                value: newSize,
+                autofocus: true,
+                placeholder: '节点个数',
+                min: 0
+              },
+              on: {
+                input: (val) => {
+                  newSize = val;
+                }
+              }
+            })
+          },
+          onOk: () => {
+            adjustPod({newSize: newSize, clusterId: item.id,}).then(res=>{
+              if (res.code === 0) {
+                this.$Message.success(res.msg);
+                this.$store.dispatch('listPodInfo');
+              } else {
+                this.$Message.success(res.msg);
+              }
+            });
+          },
         });
       },
 

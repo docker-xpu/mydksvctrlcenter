@@ -37,6 +37,15 @@ export function stopPod(data) {
   })
 }
 
+// 扩容集群
+export function adjustPod(data) {
+  return request({
+    url: 'cluster/adjust',
+    method: 'post',
+    data
+  })
+}
+
 // 获取集群列表
 export function listPod(query) {
   return request({
