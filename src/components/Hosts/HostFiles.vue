@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Button type="primary" long size="large" @click="showHostFiles = true">主机文件</Button>
+    <Button type="primary" long @click="showHostFiles = true">主机文件</Button>
 
     <Drawer width="50" v-model="showHostFiles" draggable title="宿主机文件" placement="left">
       <Card :padding="0">

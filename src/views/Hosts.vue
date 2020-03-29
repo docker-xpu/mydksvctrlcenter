@@ -6,63 +6,70 @@
            style="padding-right: 20px">
         <Card title="主机管理" icon="logo-windows" shadow style="margin-bottom: 20px">
           <Spin size="large" fix v-if="$store.state.showSpin"></Spin>
-          <Row :gutter="16">
-            <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 6, offset: 0 }">
-              <Form>
-                <FormItem>
-                  <label>
-                    <Input v-model="newHost.ip" placeholder="主机IP"></Input>
-                  </label>
-                </FormItem>
-                <FormItem>
-                  <label>
-                    <Select filterable placeholder="主机凭据" v-model="newHost.licenceId">
-                      <Option
-                              v-for="(item, index) in $store.state.licences"
-                              :key="item.licenseId"
-                              :value="item.licenseId"
-                      >{{item.licenseName}}
-                      </Option>
-                    </Select>
-                  </label>
-                </FormItem>
-                <FormItem>
-                  <label>
-                    <Input v-model="newHost.version" placeholder="dksv版本"></Input>
-                  </label>
-                </FormItem>
-                <FormItem>
-                  <Button type="success" long @click="testConn">测试连接</Button>
-                </FormItem>
-                <FormItem>
-                  <Button type="primary" long @click="addHost">添加主机</Button>
-                </FormItem>
-              </Form>
-            </Col>
-            <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 18, offset: 0 }">
-              <Row :gutter="10">
-                <Col v-for="(item, index) in $store.state.hosts" :key="index" :md="{ span: 24, offset: 0 }"
-                     :lg="{ span: 8, offset: 0 }">
-                  <Card>
-                    <Badge status="processing"></Badge>
-                    <br/>
-                    操作系统：{{item.hostOs}}
-                    <br/>
-                    主机IP：{{item.hostIp}}
-                    <br/>
-                    <Tag
-                            :color="item.hostStatus === 0 ? 'success': 'default'"
-                    >{{item.hostStatusStr}}
-                    </Tag>
 
-                    <div slot="extra">
-                      <Button type="text" style="color: red" @click="deleteHost(item)">移除</Button>
-                    </div>
-                  </Card>
-                </Col>
-              </Row>
+          <Modal v-model="showAddHostModal" title="添加主机">
+            <Form>
+              <FormItem>
+                <label>
+                  <Input v-model="newHost.ip" placeholder="主机IP"></Input>
+                </label>
+              </FormItem>
+              <FormItem>
+                <Row>
+                  <Col span="19">
+                    <label>
+                      <Select filterable placeholder="主机凭据" v-model="newHost.licenceId">
+                        <Option
+                                v-for="(item, index) in $store.state.licences"
+                                :key="item.licenseId"
+                                :value="item.licenseId"
+                        >{{item.licenseName}}
+                        </Option>
+                      </Select>
+                    </label>
+                  </Col>
+                  <Col span="4">
+                    <Button type="text" @click="showAddLicenceModal = true">新增凭据</Button>
+                  </Col>
+                </Row>
+              </FormItem>
+              <FormItem>
+                <label>
+                  <Input v-model="newHost.version" placeholder="dksv版本"></Input>
+                </label>
+              </FormItem>
+            </Form>
+            <div slot="footer">
+              <Button type="success" @click="testConn">测试连接</Button>
+              <Button type="primary" @click="addHost">添加主机</Button>
+            </div>
+          </Modal>
+
+          <Row :gutter="10">
+            <Col v-for="(item, index) in $store.state.hosts" :key="index" :md="{ span: 24, offset: 0 }"
+                 :lg="{ span: 8, offset: 0 }">
+              <Card>
+                <Badge status="processing"></Badge>
+                <br/>
+                操作系统：{{item.hostOs}}
+                <br/>
+                主机IP：{{item.hostIp}}
+                <br/>
+                <Tag
+                        :color="item.hostStatus === 0 ? 'success': 'default'"
+                >{{item.hostStatusStr}}
+                </Tag>
+
+                <div slot="extra">
+                  <Button type="text" style="color: red" @click="deleteHost(item)">移除</Button>
+                </div>
+              </Card>
             </Col>
           </Row>
+
+          <div style="padding-top: 20px; text-align: center">
+            <Button type="primary" size="large" @click="showAddHostModal=true">添加主机</Button>
+          </div>
         </Card>
 
         <!--        监控控制按钮-->
@@ -70,10 +77,16 @@
           <Alert>
             <h2>实时监控</h2>
             <br>
-            <ButtonGroup size="large">
-              <Button @click="onClickWatchBtn" type="success">打开</Button>
-              <Button @click="handlePauseWatchBtnClick" type="primary">暂停</Button>
-              <Button @click="onClickCloseWatchBtn" type="warning">关闭</Button>
+            <ButtonGroup shape="circle">
+              <Button @click="onClickWatchBtn" type="success">
+                <Icon type="md-power"></Icon>
+              </Button>
+              <Button @click="handlePauseWatchBtnClick" type="primary">
+                <Icon type="md-pause"></Icon>
+              </Button>
+              <Button @click="onClickCloseWatchBtn" type="warning">
+                <Icon type="md-close"></Icon>
+              </Button>
             </ButtonGroup>
           </Alert>
         </div>
@@ -113,15 +126,12 @@
                     </Col>
                     <Col span="8">
                       <ContainerInfo :container-info="$store.state.hosts[index]"></ContainerInfo>
-<!--                      <ContainerInfo :container-info="hostInfo($store.state.hosts[index])"></ContainerInfo>-->
                     </Col>
                     <Col span="8">
                       <HostFiles :host-ip="item.hostIp"></HostFiles>
                     </Col>
                   </Row>
                 </div>
-
-                <Divider></Divider>
 
                 <div v-if="showWatch" :id="index" style="width: 100%; height: 300px"></div>
               </Card>
@@ -134,7 +144,7 @@
       <Col :md="{ span: 24, offset: 0 }" :lg="{ span: 6, offset: 0 }">
         <CloudFiles style="padding-bottom: 20px"></CloudFiles>
 
-        <Card title="已有凭据" icon="md-key" shadow style="width: 100%; margin-bottom: 20px">
+        <Card :padding="0" title="已有凭据" icon="md-key" shadow style="width: 100%; margin-bottom: 20px">
           <CellGroup>
             <Cell
                     v-for="(item, index) in $store.state.licences"
@@ -151,21 +161,23 @@
               <Button type="text" style="color: red" slot="extra" @click="deleteLicence(item)">删除</Button>
             </Cell>
           </CellGroup>
-        </Card>
-        <Card title="新增凭据" icon="md-key" shadow>
-          <Form>
-            <FormItem>
-              <Input v-model="licence.name" type="text" placeholder="凭据名称"></Input>
-            </FormItem>
-            <FormItem>
-              <Input v-model="licence.pwd" type="password" placeholder="凭据密码"></Input>
-            </FormItem>
-            <FormItem>
-              <Button type="primary" long @click="newLicence">提交</Button>
-            </FormItem>
-          </Form>
+          <Button long type="primary" size="large" @click="showAddLicenceModal=true">新增凭据</Button>
         </Card>
       </Col>
+
+      <Modal v-model="showAddLicenceModal" title="新增凭据">
+        <Form>
+          <FormItem>
+            <Input v-model="licence.name" type="text" placeholder="凭据名称"></Input>
+          </FormItem>
+          <FormItem>
+            <Input v-model="licence.pwd" type="password" placeholder="凭据密码"></Input>
+          </FormItem>
+        </Form>
+        <div slot="footer">
+          <Button type="primary" @click="newLicence">新建凭据</Button>
+        </div>
+      </Modal>
     </Row>
   </div>
 </template>
@@ -184,6 +196,9 @@
     components: {CloudFiles, HostFiles, Logo, ContainerInfo, Network},
     data() {
       return {
+        showAddHostModal: false,
+        showAddLicenceModal: false,
+
         // 主机凭据
         licence: {
           name: "",

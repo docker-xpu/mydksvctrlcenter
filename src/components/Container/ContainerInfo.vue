@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Button size="large" long type="primary" @click="handleClickContainerInfoBtn">容器信息</Button>
+    <Button long type="primary" @click="handleClickContainerInfoBtn">容器信息</Button>
 
     <Drawer width="90" draggable :closable="true" @on-close="handleDrawerClose" v-model="showContainerInfo">
       <!--      标题-->
@@ -20,13 +20,6 @@
         <Tag color="purple">内存{{(containerInfo.memTotal/1024/1024/1024).toFixed(1)}}GB</Tag>
       </div>
       <Divider></Divider>
-
-      <div style="text-align: center">
-        <ButtonGroup>
-          <Button type="primary" icon="md-refresh" @click="refreshHostInfo">刷新容器信息</Button>
-          <Button type="primary" icon="md-refresh" @click="refreshHostInfo">刷新镜像信息</Button>
-        </ButtonGroup>
-      </div>
 
       <Table stripe :columns="containerInfoColumns" :data="containerInfo.containers">
         <template slot-scope="{ row }" slot="id">
@@ -76,9 +69,11 @@
       </Table>
 
       <div style="text-align: center; padding-top: 30px">
-        <Button type="primary" size="large" long @click="showCreateContainer = true">
-          创建容器
-        </Button>
+        <ButtonGroup>
+          <Button type="dashed" icon="md-refresh" @click="refreshHostInfo">刷新容器信息</Button>
+          <Button type="primary" icon="md-add" @click="showCreateContainer = true">创建容器</Button>
+          <Button type="dashed" icon="md-refresh" @click="refreshHostInfo">刷新镜像信息</Button>
+        </ButtonGroup>
       </div>
     </Drawer>
 
@@ -107,7 +102,7 @@
               </Row>
             </FormItem>
             <FormItem label="镜像名：">
-<!--              <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>-->
+              <!--              <Input type="text" v-model="createContainerForm.image_name" placeholder="例如：nginx"></Input>-->
 
               <Row>
                 <Col span="12">
