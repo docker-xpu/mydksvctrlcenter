@@ -42,3 +42,12 @@ export function saveCode(data) {
     data
   })
 }
+
+// 容器调度日志
+export function listDispatchLog(query) {
+  return request({
+    url: 'dispatch/log',
+    method: 'get',
+    params: query
+  })
+}

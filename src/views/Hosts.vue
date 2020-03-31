@@ -68,7 +68,19 @@
           </Row>
 
           <div style="padding-top: 20px; text-align: center">
-            <Button type="primary" size="large" @click="showAddHostModal=true">添加主机</Button>
+            <Row :gutter="16">
+              <Col span="12">
+                <Button type="primary" long
+                        @click="showAddHostModal=true">添加主机
+                </Button>
+              </Col>
+              <Col span="12">
+                <Button type="warning" long
+                        @click="showDispatchLog = true">
+                  调度日志
+                </Button>
+              </Col>
+            </Row>
           </div>
         </Card>
 
@@ -178,6 +190,18 @@
           <Button type="primary" @click="newLicence">新建凭据</Button>
         </div>
       </Modal>
+
+      <Modal v-model="showDispatchLog" width="50" title="调度日志">
+        <Alert v-for="(item, index) in dispatch_log" :key="index" type="warning" show-icon>
+          {{new Date(item.migrateId).toLocaleDateString()}} {{new Date(item.migrateId).toLocaleTimeString()}}
+          <template slot="desc">
+            {{item.migrateLog}}
+          </template>
+        </Alert>
+        <div slot="footer">
+          <Button type="primary" @click="showDispatchLog = false">知道了</Button>
+        </div>
+      </Modal>
     </Row>
   </div>
 </template>
@@ -185,6 +209,7 @@
 <script>
   import store from "../store/index";
   import {connHost, initHost, removeHost} from "../api/host";
+  import {listDispatchLog} from '../api/utils';
   import Network from "../components/Network";
   import ContainerInfo from "../components/Container/ContainerInfo";
   import Logo from "../components/Logo";
@@ -198,6 +223,9 @@
       return {
         showAddHostModal: false,
         showAddLicenceModal: false,
+        showDispatchLog: false,
+
+        dispatch_log: [],
 
         // 主机凭据
         licence: {
@@ -301,6 +329,10 @@
     mounted() {
       store.dispatch("getAllLicence");
       store.dispatch("getAllHost");
+
+      listDispatchLog().then(res=>{
+        this.dispatch_log = res.data;
+      });
     },
     methods: {
       // hostInfo: function (hostInfo) {
