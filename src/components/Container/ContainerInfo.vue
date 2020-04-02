@@ -2,7 +2,8 @@
   <div>
     <Button long type="primary" @click="handleClickContainerInfoBtn">容器信息</Button>
 
-    <Drawer width="90" draggable :closable="true" @on-close="handleDrawerClose" v-model="showContainerInfo">
+    <Drawer width="90" draggable :closable="true" @on-close="handleDrawerClose"
+            v-model="showContainerInfo">
       <!--      标题-->
       <div>
         <h2>
@@ -60,11 +61,13 @@
           <span v-for="(mnt, index) in row.container.mounts" :key="index">{{ mnt.Destination }}:{{mnt.Source}}</span>
         </template>
         <template slot-scope="{ row, index }" slot="action">
-          <Button icon="md-arrow-dropright-circle" type="success" size="small" @click="startContainer(row)" long>启动
+          <Button icon="md-arrow-dropright-circle" type="success" size="small" @click="startContainer(row)" long>
+            启动
           </Button>
           <Button icon="md-square" type="primary" size="small" @click="stopContainer(row)" long>停止</Button>
           <Button icon="ios-cloud-upload" type="warning" size="small" @click="pushContainer(row)" long>推送</Button>
           <Button icon="md-remove-circle" type="error" size="small" @click="removeContainer(row)" long>删除</Button>
+          <Button icon="md-eye" type="primary" size="small" @click="logContainer(row)" long>日志</Button>
         </template>
       </Table>
 
@@ -75,7 +78,19 @@
           <Button type="dashed" icon="md-refresh" @click="refreshHostInfo">刷新镜像信息</Button>
         </ButtonGroup>
       </div>
+
+      <Modal v-model="showContainerLogsModal" fullscreen title="Logs">
+        <Alert v-for="(item, index) in containerLogs" :key="index">
+          <Tag color="magenta">{{index}}</Tag>{{item}}
+        </Alert>
+        <div slot="footer">
+          <Button size="large" type="primary" @click="showContainerLogsModal=false">好的</Button>
+        </div>
+      </Modal>
     </Drawer>
+
+    <!--    容器日志信息   -->
+<!--    <Modal v-modal="showContainerLogsModal"></Modal>-->
 
     <Drawer title="创建容器" draggable
             :closable="true"
@@ -205,7 +220,14 @@
 </template>
 
 <script>
-  import {startContainer, createContainer, stopContainer, removeContainer, pushContainer} from '../../api/container';
+  import {
+    startContainer,
+    createContainer,
+    stopContainer,
+    removeContainer,
+    pushContainer,
+    getContainerLogs
+  } from '../../api/container';
   import HostFiles from "../Hosts/HostFiles";
 
   export default {
@@ -260,6 +282,8 @@
         ],
 
         pushContainerForm: {},
+        containerLogs: [],
+        showContainerLogsModal: false,
 
         showCreateMsg: false,
         createMsg: '',
@@ -331,6 +355,14 @@
             this.$Message.error(res.msg);
           }
         })
+      },
+      // 查看容器日志
+      logContainer(row) {
+        console.log(row.container.id, this.containerInfo.hostIp);
+        getContainerLogs({ip: this.containerInfo.hostIp, container_name: row.container.id}).then(res => {
+          this.containerLogs = res.data;
+          this.showContainerLogsModal = true;
+        });
       },
       // 点击删除容器
       removeContainer(row) {

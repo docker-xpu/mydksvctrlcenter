@@ -10,6 +10,15 @@ export function startContainer(data) {
   })
 }
 
+// 获取容器日志信息
+export function getContainerLogs(query) {
+  return request({
+    url: 'container/logs',
+    method: 'get',
+    params: query
+  })
+}
+
 // 停止容器
 export function stopContainer(data) {
   return request({
